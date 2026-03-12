@@ -3,16 +3,16 @@
  * garmin-sync.js — Sincroniza datos de Garmin Connect a Supabase
  *
  * Uso:
- *   GARMIN_EMAIL=tu@email.com GARMIN_PASSWORD=tupass node scripts/garmin-sync.js
- *
- * O crea un archivo .env.sync (NO se sube a git) con:
- *   GARMIN_EMAIL=...
- *   GARMIN_PASSWORD=...
- *   SUPABASE_URL=...
- *   SUPABASE_SERVICE_KEY=...
+ *   1. Copia .env.sync.example a .env.sync y rellena tus datos
+ *   2. npm run sync
  */
 
-import 'dotenv/config'
+import dotenv from 'dotenv'
+import { resolve } from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
+dotenv.config({ path: resolve(__dirname, '../.env.sync') })
 import { GarminConnect } from 'garmin-connect'
 import { createClient } from '@supabase/supabase-js'
 
