@@ -1,6 +1,6 @@
 <template>
   <router-view />
-  <nav class="app-nav">
+  <nav v-if="!esLogin" class="app-nav">
     <button
       v-for="item in navItems"
       :key="item.path"
@@ -14,9 +14,11 @@
   </nav>
 </template>
 <script setup>
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-const route  = useRoute()
-const router = useRouter()
+const route   = useRoute()
+const router  = useRouter()
+const esLogin = computed(() => route.path === '/login')
 const navItems = [
   { path: '/hoy',     icon: '☀️',  label: 'Hoy'     },
   { path: '/nutri',   icon: '🥗',  label: 'Nutri'   },
