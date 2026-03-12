@@ -26,23 +26,29 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;">
         <div class="g-card" style="padding:16px 18px 14px;border-right:1px solid #f2f2f0;border-bottom:1px solid #f2f2f0;">
           <div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">HRV · 7d avg</div>
-          <div style="font-size:26px;font-weight:800;color:#b8860b;letter-spacing:-1px;">30 <span style="font-size:14px;font-weight:600;">ms</span></div>
-          <div style="font-size:12px;color:#b8860b;font-weight:600;margin-top:3px;">■ Low</div>
+          <div style="font-size:26px;font-weight:800;letter-spacing:-1px;" :style="{ color: hrvColor(garmin?.hrv_status) }">
+            {{ garmin?.hrv_7d_avg ?? '—' }} <span style="font-size:14px;font-weight:600;">ms</span>
+          </div>
+          <div style="font-size:12px;font-weight:600;margin-top:3px;" :style="{ color: hrvColor(garmin?.hrv_status) }">
+            ■ {{ garmin?.hrv_status ?? '—' }}
+          </div>
         </div>
         <div class="g-card" style="padding:16px 18px 14px;border-bottom:1px solid #f2f2f0;">
           <div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Body Battery</div>
-          <div style="font-size:26px;font-weight:800;color:#10A46A;letter-spacing:-1px;">27</div>
-          <div style="font-size:12px;color:#888;margin-top:3px;">VO₂Max 45 · Strained</div>
+          <div style="font-size:26px;font-weight:800;letter-spacing:-1px;" :style="{ color: bbColor(garmin?.body_battery) }">
+            {{ garmin?.body_battery ?? '—' }}
+          </div>
+          <div style="font-size:12px;color:#888;margin-top:3px;">VO₂Max {{ garmin?.vo2max ?? '—' }} · {{ garmin?.training_status ?? '—' }}</div>
         </div>
         <div class="g-card" style="padding:14px 18px 12px;border-right:1px solid #f2f2f0;">
           <div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">Training Load</div>
-          <div style="font-size:18px;font-weight:700;color:#111;">Low</div>
-          <div style="font-size:12px;color:#888;margin-top:2px;">Ratio 0.4</div>
+          <div style="font-size:18px;font-weight:700;color:#111;">{{ garmin?.training_status ?? '—' }}</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">Ratio {{ garmin?.training_load_ratio ?? '—' }}</div>
         </div>
         <div class="g-card" style="padding:14px 18px 12px;">
           <div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">Fitness Age</div>
-          <div style="font-size:26px;font-weight:800;color:#10A46A;letter-spacing:-1px;">39</div>
-          <div style="font-size:12px;color:#888;margin-top:2px;">vs 40 real</div>
+          <div style="font-size:26px;font-weight:800;color:#10A46A;letter-spacing:-1px;">{{ garmin?.fitness_age ?? '—' }}</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">vs {{ semana.edadReal ?? 40 }} real</div>
         </div>
       </div>
     </div>
@@ -84,9 +90,36 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSemanaStore } from '@/stores/semana'
+import { supabase } from '@/lib/supabase'
 
 const router = useRouter()
 const semana = useSemanaStore()
+
+// ── Garmin data desde Supabase ──
+const garmin = ref(null)
+async function fetchGarmin() {
+  const { data } = await supabase
+    .from('garmin_metrics')
+    .select('*')
+    .order('date', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (data) garmin.value = data
+}
+
+function hrvColor(status) {
+  if (!status) return '#888'
+  const s = status.toLowerCase()
+  if (s.includes('low') || s.includes('baja')) return '#b8860b'
+  if (s.includes('high') || s.includes('alta')) return '#10A46A'
+  return '#10A46A'
+}
+function bbColor(val) {
+  if (!val) return '#888'
+  if (val >= 60) return '#10A46A'
+  if (val >= 30) return '#b8860b'
+  return '#d32f2f'
+}
 
 // ── Header shrink on scroll ──
 const shrunk  = ref(false)
@@ -100,7 +133,10 @@ function onScroll() {
     ticking = true
   }
 }
-onMounted(()  => window.addEventListener('scroll', onScroll, { passive: true }))
+onMounted(() => {
+  window.addEventListener('scroll', onScroll, { passive: true })
+  fetchGarmin()
+})
 onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 // ── Día actual ──
