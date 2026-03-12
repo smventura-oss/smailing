@@ -1,84 +1,188 @@
 <template>
   <div>
+    <!-- HEADER -->
     <header class="screen-header" :class="{ shrunk }">
-      <div class="screen-tag">Nutrición · {{ fechaHoy }}</div>
-      <div class="screen-title">{{ kcalRestantes }} kcal</div>
-      <div class="screen-sub">{{ kcalComidas }} comidas · {{ kcalConsumidas }} consumidas</div>
+      <div class="screen-title">🍽️ Nutrición</div>
+      <div class="screen-sub">Objetivo déficit −300 kcal/día</div>
     </header>
 
-    <!-- Calorías ring + macros -->
-    <div class="card macros-card">
-      <div class="macros-top">
-        <div class="kcal-ring-wrap">
-          <svg viewBox="0 0 80 80" class="kcal-ring">
-            <circle cx="40" cy="40" r="34" class="ring-bg" />
-            <circle cx="40" cy="40" r="34" class="ring-fill"
-              :stroke-dasharray="`${ringPct * 213.6 / 100} 213.6`"
-              stroke-dashoffset="53.4"
-            />
-          </svg>
-          <div class="ring-label">
-            <span class="ring-val">{{ pct }}%</span>
-            <span class="ring-sub">objetivo</span>
-          </div>
-        </div>
-        <div class="macros-list">
-          <MacroBar v-for="m in macros" :key="m.key" :macro="m" />
-        </div>
-      </div>
-    </div>
-
-    <!-- Agua -->
-    <div class="card agua-card">
-      <div class="agua-header">
-        <span class="agua-title">💧 Agua</span>
-        <span class="agua-val">{{ aguaVasos }} / 8 vasos</span>
-      </div>
-      <div class="agua-dots">
-        <button
-          v-for="i in 8"
+    <!-- COMIDAS / DESPENSA toggle -->
+    <div v-if="vista === 'comidas'" id="sn-comidas">
+      <!-- DAY STRIP -->
+      <div class="day-strip">
+        <div
+          v-for="(dia, i) in semana.dias"
           :key="i"
-          class="agua-dot"
-          :class="{ filled: i <= aguaVasos }"
-          @click="toggleAgua(i)"
-        />
+          class="chip"
+          :class="{ active: diaActivo === i, past: i < hoyIdx }"
+          @click="diaActivo = i"
+        >
+          <div class="chip-day">{{ DIAS_CORTOS[i] }}</div>
+          <div class="chip-num">{{ fechas[i] }}</div>
+          <div class="chip-tag" :class="semana.DIA_TAG_CSS[i]">{{ semana.DIA_TAGS[i] }}</div>
+        </div>
       </div>
-    </div>
 
-    <!-- Comidas -->
-    <div
-      v-for="comida in comidas"
-      :key="comida.id"
-      class="card comida-card"
-    >
-      <div class="comida-header">
-        <div class="comida-meta">
-          <span class="comida-emoji">{{ comida.emoji }}</span>
+      <!-- DAY PANELS -->
+      <div class="day-panels">
+        <div
+          v-for="(dia, i) in semana.dias"
+          :key="i"
+          class="day-panel"
+          :class="{ active: diaActivo === i }"
+        >
+          <!-- KCAL BAR -->
+          <div class="kcal-bar">
+            <div class="kcal-badge-row">
+              <div class="train-badge" :class="dia.badge">{{ dia.badgeLabel }}</div>
+            </div>
+            <div v-if="dia.badgeExtra" class="kcal-badge-row" style="margin-top:4px;">
+              <div class="train-badge" :style="dia.badgeExtra.style">{{ dia.badgeExtra.label }}</div>
+            </div>
+            <div>
+              <div class="kcal-val">{{ dia.kcal }}</div>
+              <div class="kcal-sub">{{ dia.deficit }}</div>
+            </div>
+            <div class="macro-row">
+              <div class="macro"><div class="mval">{{ dia.proteina }}</div><div class="mlbl">Prot.</div></div>
+              <div class="macro"><div class="mval">{{ dia.carbos }}</div><div class="mlbl">Carbos</div></div>
+              <div class="macro"><div class="mval">{{ dia.grasa }}</div><div class="mlbl">Grasa</div></div>
+            </div>
+          </div>
+
+          <!-- COMIDAS -->
+          <div
+            v-for="comida in dia.comidas"
+            :key="comida.id"
+            class="meal"
+            :class="{ collapsed: collapsed[comida.id] }"
+            :id="'meal-' + comida.id"
+          >
+            <div class="meal-head" @click="toggleMeal(comida.id)">
+              <div class="meal-left">
+                <div class="meal-time">{{ comida.hora }}</div>
+                <div class="meal-name">{{ comida.nombre }}</div>
+              </div>
+              <div class="meal-kcal">{{ comida.kcal }}</div>
+            </div>
+            <div class="meal-body">
+              <div v-for="([nombre, cantidad], j) in comida.ings" :key="j" class="ing">
+                <span>{{ nombre }}</span><span class="ing-g">{{ cantidad }}</span>
+              </div>
+              <div v-if="comida.nota" class="meal-note">{{ comida.nota }}</div>
+            </div>
+          </div>
+
+          <!-- SUPLEMENTOS -->
+          <div v-if="dia.suplementos?.length" class="suppl">
+            <div class="suppl-title">💊 Suplementación</div>
+            <div v-for="([nombre, cuando], j) in dia.suplementos" :key="j" class="suppl-row">
+              <span>{{ nombre }}</span><span class="suppl-when">{{ cuando }}</span>
+            </div>
+          </div>
+
+          <!-- NOTA -->
+          <div v-if="dia.nota" class="note" :class="dia.nota.tipo">{{ dia.nota.texto }}</div>
+        </div>
+      </div><!-- end day-panels -->
+
+      <!-- BOTÓN DESPENSA -->
+      <div style="margin:4px 16px 16px;text-align:center;">
+        <button
+          @click="vista = 'despensa'"
+          style="background:none;border:1px solid #e0e0dc;border-radius:8px;padding:10px 20px;font-size:13px;color:#767676;cursor:pointer;width:100%;font-weight:500;"
+        >🥫 Ver despensa completa</button>
+      </div>
+    </div><!-- end sn-comidas -->
+
+    <!-- DESPENSA -->
+    <div v-else id="sn-desp">
+      <header class="screen-header" style="padding:12px 16px 10px;position:static;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button
+            @click="vista = 'comidas'"
+            style="border:none;background:rgba(255,255,255,0.2);border-radius:8px;padding:6px 12px;font-size:13px;color:#fff;cursor:pointer;font-weight:600;"
+          >← Volver</button>
           <div>
-            <div class="comida-nombre">{{ comida.nombre }}</div>
-            <div class="comida-hora">{{ comida.hora }}</div>
+            <div class="screen-tag">Inventario · 27 feb 2026</div>
+            <div class="screen-title" style="font-size:18px;">🥫 Despensa</div>
           </div>
         </div>
-        <span class="comida-kcal">{{ comida.kcal }} kcal</span>
-      </div>
-      <div v-if="comida.items.length" class="comida-items">
-        <div v-for="(it, idx) in comida.items" :key="idx" class="comida-item">
-          <span class="ci-nombre">{{ it.nombre }}</span>
-          <span class="ci-kcal">{{ it.kcal }} kcal</span>
+      </header>
+
+      <!-- TABS stock / compra -->
+      <div class="desp-tabs">
+        <div class="desp-tab" :class="{ active: despTab === 'stock' }" @click="despTab = 'stock'">
+          🏠 Stock <span class="badge-count">{{ stockCount }}</span>
+        </div>
+        <div class="desp-tab" :class="{ active: despTab === 'compra' }" @click="despTab = 'compra'">
+          🛒 Por comprar <span class="badge-count" style="background:var(--md-error);">{{ compraCount }}</span>
         </div>
       </div>
-      <div v-else class="comida-vacia">Sin registrar</div>
-    </div>
 
-    <div class="spacer" />
+      <!-- PANEL STOCK -->
+      <div v-if="despTab === 'stock'" class="desp-panel active">
+        <div v-if="!stockItems.length" class="desp-empty">
+          <span class="desp-empty-icon">🏠</span>Despensa vacía
+        </div>
+        <template v-else>
+          <template v-for="cat in semana.CATS" :key="cat.id">
+            <div v-if="stockPorCat(cat.id).length" class="desp-section">
+              <div class="desp-sec-head">{{ cat.label }}</div>
+              <div v-for="item in stockPorCat(cat.id)" :key="item.id" class="desp-item">
+                <div class="desp-item-info">
+                  <div>{{ item.name }}</div>
+                  <div v-if="item.note" class="desp-item-note">{{ item.note }}</div>
+                </div>
+                <button class="btn-comprar" @click="semana.moverACompra(item.id)">Comprar</button>
+              </div>
+            </div>
+          </template>
+        </template>
+        <div style="height:16px" />
+      </div>
+
+      <!-- PANEL COMPRA -->
+      <div v-else class="desp-panel active">
+        <button class="btn-all" @click="semana.marcarTodoComprado()">✓ Todo comprado — mover a despensa</button>
+        <div v-if="!compraItems.length" class="desp-empty">
+          <span class="desp-empty-icon">🎉</span>¡Todo en despensa!
+        </div>
+        <template v-else>
+          <template v-for="cat in semana.CATS" :key="cat.id">
+            <div v-if="compraPorCat(cat.id).length" class="desp-section">
+              <div class="desp-sec-head">{{ cat.label }}</div>
+              <div
+                v-for="item in compraPorCat(cat.id)"
+                :key="item.id"
+                class="compra-item"
+                :class="{ bought: semana.despensaState[item.id]?.bought }"
+                @click="semana.toggleBought(item.id)"
+              >
+                <div class="checkbox"><span class="checkmark">✓</span></div>
+                <div>
+                  <div class="compra-name">{{ item.name }}</div>
+                  <div v-if="item.note" class="compra-note">{{ item.note }}</div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </template>
+        <div style="height:16px" />
+      </div>
+    </div><!-- end sn-desp -->
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import MacroBar from '../components/nutri/MacroBar.vue'
+import { useRoute } from 'vue-router'
+import { useSemanaStore } from '@/stores/semana'
 
-/* scroll shrink */
+const semana = useSemanaStore()
+const route  = useRoute()
+
+// ── Header shrink ──
 const shrunk  = ref(false)
 let ticking   = false
 function onScroll() {
@@ -87,108 +191,39 @@ function onScroll() {
     ticking = true
   }
 }
-onMounted(()  => window.addEventListener('scroll', onScroll, { passive: true }))
+onMounted(() => {
+  window.addEventListener('scroll', onScroll, { passive: true })
+  // Si llega con ?meal=xxx, expandir ese día
+  if (route.query.meal) {
+    const mealId = route.query.meal
+    const dayIdx = semana.dias.findIndex(d => d.comidas.some(c => c.id === mealId))
+    if (dayIdx !== -1) diaActivo.value = dayIdx
+  }
+})
 onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
-/* fecha */
-const DIAS  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']
+// ── Días ──
+const DIAS_CORTOS = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM']
 const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']
-const hoy   = new Date()
-const fechaHoy = `${DIAS[hoy.getDay()]} ${hoy.getDate()} ${MESES[hoy.getMonth()]}`
+const hoyIdx = semana.diaIdx()
+const dates  = semana.weekDates()
+const fechas = dates.map(d => d.getDate())
 
-/* calorías */
-const kcalObj      = 1900
-const kcalConsumidas = ref(1340)
-const kcalRestantes  = computed(() => kcalObj - kcalConsumidas.value)
-const kcalComidas    = computed(() => comidas.value.filter(c => c.kcal > 0).length)
-const pct            = computed(() => Math.min(100, Math.round((kcalConsumidas.value / kcalObj) * 100)))
-const ringPct        = computed(() => pct.value)
+const diaActivo = ref(hoyIdx)
+const vista     = ref('comidas')
+const despTab   = ref('stock')
+const collapsed = ref({})
 
-/* macros */
-const macros = ref([
-  { key: 'prot',  label: 'Proteína', emoji: '🥩', actual: 98,  obj: 150, unit: 'g', color: '#e65100' },
-  { key: 'carbs', label: 'Carbos',   emoji: '🍞', actual: 140, obj: 200, unit: 'g', color: '#1565c0' },
-  { key: 'grasa', label: 'Grasa',    emoji: '🥑', actual: 44,  obj: 60,  unit: 'g', color: '#6a1c9a' },
-])
-
-/* agua */
-const aguaVasos = ref(3)
-function toggleAgua(i) {
-  aguaVasos.value = aguaVasos.value === i ? i - 1 : i
+function toggleMeal(id) {
+  collapsed.value[id] = !collapsed.value[id]
 }
 
-/* comidas */
-const comidas = ref([
-  {
-    id: 'desayuno', emoji: '🌅', nombre: 'Desayuno', hora: '08:15',
-    kcal: 420,
-    items: [
-      { nombre: 'Avena con leche',    kcal: 280 },
-      { nombre: 'Plátano',            kcal: 95  },
-      { nombre: 'Café con leche',     kcal: 45  },
-    ],
-  },
-  {
-    id: 'almuerzo', emoji: '☀️', nombre: 'Almuerzo', hora: '13:30',
-    kcal: 620,
-    items: [
-      { nombre: 'Arroz integral 200g', kcal: 260 },
-      { nombre: 'Pechuga plancha',     kcal: 220 },
-      { nombre: 'Ensalada verde',      kcal: 40  },
-      { nombre: 'Fruta',               kcal: 100 },
-    ],
-  },
-  {
-    id: 'snack', emoji: '🍎', nombre: 'Snack', hora: '17:00',
-    kcal: 300,
-    items: [
-      { nombre: 'Yogur griego 0%',    kcal: 130 },
-      { nombre: 'Nueces 30g',          kcal: 170 },
-    ],
-  },
-  {
-    id: 'cena', emoji: '🌙', nombre: 'Cena', hora: '—',
-    kcal: 0,
-    items: [],
-  },
-])
+// ── Despensa ──
+const stockItems  = computed(() => semana.ITEMS.filter(i => semana.despensaState[i.id]?.inDesp))
+const compraItems = computed(() => semana.ITEMS.filter(i => !semana.despensaState[i.id]?.inDesp))
+const stockCount  = computed(() => stockItems.value.length)
+const compraCount = computed(() => compraItems.value.length)
+
+const stockPorCat  = (catId) => stockItems.value.filter(i => i.cat === catId)
+const compraPorCat = (catId) => compraItems.value.filter(i => i.cat === catId)
 </script>
-
-<style scoped>
-/* macros card */
-.macros-card { margin-top: 12px; }
-.macros-top { display: flex; gap: 16px; align-items: center; }
-
-/* ring */
-.kcal-ring-wrap { position: relative; width: 80px; height: 80px; flex-shrink: 0; }
-.kcal-ring { width: 80px; height: 80px; transform: rotate(-90deg); }
-.ring-bg   { fill: none; stroke: #e8e8e8; stroke-width: 8; }
-.ring-fill { fill: none; stroke: var(--green); stroke-width: 8; stroke-linecap: round; transition: stroke-dasharray 600ms cubic-bezier(.4,0,.2,1); }
-.ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.ring-val { font-size: 16px; font-weight: 800; color: var(--green); line-height: 1; }
-.ring-sub { font-size: 9px; color: var(--text-3); }
-
-/* macros list */
-.macros-list { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-
-/* agua */
-.agua-card { }
-.agua-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.agua-title { font-weight: 700; font-size: 15px; }
-.agua-val { font-size: 13px; color: var(--text-2); font-weight: 600; }
-.agua-dots { display: flex; gap: 8px; }
-.agua-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #b3d9f0; background: none; cursor: pointer; transition: background 200ms, border-color 200ms; -webkit-tap-highlight-color: transparent; }
-.agua-dot.filled { background: #1e90ff; border-color: #1e90ff; }
-
-/* comidas */
-.comida-header { display: flex; justify-content: space-between; align-items: center; }
-.comida-meta { display: flex; align-items: center; gap: 10px; }
-.comida-emoji { font-size: 22px; }
-.comida-nombre { font-weight: 700; font-size: 15px; }
-.comida-hora { font-size: 12px; color: var(--text-3); margin-top: 1px; }
-.comida-kcal { font-size: 15px; font-weight: 700; color: var(--green); }
-.comida-items { margin-top: 10px; border-top: 1px solid #f0f0f0; padding-top: 8px; display: flex; flex-direction: column; gap: 6px; }
-.comida-item { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-2); }
-.ci-kcal { font-weight: 600; color: var(--text-3); }
-.comida-vacia { margin-top: 8px; font-size: 13px; color: var(--text-3); font-style: italic; }
-</style>
