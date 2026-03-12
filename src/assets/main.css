@@ -191,7 +191,7 @@ body{
 }
 .screen-header.shrunk .screen-tag{opacity:0;max-height:0;margin-bottom:0;}
 .screen-title{
-  font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-.5px;line-height:1.05;margin-bottom:2px;
+  font-size:28px;font-weight:600;color:#ffffff;letter-spacing:-.5px;line-height:1.05;margin-bottom:2px;
   transition:font-size 280ms cubic-bezier(.4,0,.2,1),letter-spacing 280ms cubic-bezier(.4,0,.2,1);
 }
 .screen-header.shrunk .screen-title{font-size:18px;letter-spacing:-.2px;}
