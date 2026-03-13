@@ -1,13 +1,1014 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smailing</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="theme-color" content="#f5f5f2">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Smailing · App</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --md-primary: #10A46A;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #d0f0e4;
+  --md-on-primary-container: #0a1f10;
+  --md-secondary: #3d4f45;
+  --md-on-secondary: #ffffff;
+  --md-secondary-container: #d0f0e4;
+  --md-on-secondary-container: #10A46A;
+  --md-tertiary: #5c5c5c;
+  --md-on-tertiary: #ffffff;
+  --md-tertiary-container: #e8e8e8;
+  --md-on-tertiary-container: #1a1a1a;
+  --md-error: #9b2a2a;
+  --md-error-container: #f5dada;
+  --md-on-error-container: #3d0a0a;
+  --md-surface: #ffffff;
+  --md-surface-variant: #f0f0ee;
+  --md-on-surface: #111111;
+  --md-on-surface-variant: #666660;
+  --md-surface-1: #f7f7f5;
+  --md-surface-2: #f0f0ee;
+  --md-surface-3: #e8e8e4;
+  --md-outline: #aaaaaa;
+  --md-outline-variant: #e8e8e4;
+  --md-background: #f5f5f2;
+  --md-success: #10A46A;
+  --md-success-container: #d0f0e4;
+  --md-warning: #7a4f00;
+  --md-warning-container: #fdf0d5;
+  --elev-1: rgba(0,0,0,0.03);
+  --elev-2: rgba(0,0,0,0.05);
+  --nav-h: 78px;
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;
+  --sp-5:20px;--sp-6:24px;--sp-8:32px;
+  --shape-xs:4px;--shape-sm:8px;--shape-md:8px;
+  --shape-lg:8px;--shape-xl:8px;--shape-full:100px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{background:#f5f5f2;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--md-background);color:var(--md-on-surface);min-height:100vh;padding-bottom:96px;font-size:14px;line-height:1.5;}
+.md-title-md{font-size:16px;font-weight:500;line-height:24px;letter-spacing:.15px;}
+.md-body-md{font-size:14px;font-weight:400;line-height:20px;letter-spacing:.25px;}
+.md-label-md{font-size:12px;font-weight:500;line-height:16px;letter-spacing:.5px;}
+.bottom-nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:420px;height:62px;background:rgba(22,22,22,0.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:100px;border:1px solid rgba(255,255,255,0.10);display:flex;align-items:center;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,0.28),0 2px 8px rgba(0,0,0,0.18);padding:0 6px;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;border:none;background:none;padding:8px 4px;color:rgba(255,255,255,0.45);transition:all .2s;position:relative;min-height:48px;border-radius:100px;}
+.nav-btn.active{color:#ffffff;font-weight:600;}
+.nav-indicator{width:44px;height:34px;border-radius:100px;background:transparent;transition:background .2s;display:flex;align-items:center;justify-content:center;}
+.nav-btn.active .nav-indicator{background:rgba(255,255,255,0.12);animation:indicatorPop 320ms cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes indicatorPop{0%{transform:scaleX(.7) scaleY(.85);}60%{transform:scaleX(1.08) scaleY(1.05);}100%{transform:scaleX(1) scaleY(1);}}
+.nav-icon{font-size:20px;line-height:1;}
+.nav-label{font-size:10px;font-weight:500;letter-spacing:0;}
+.screen-header{background:#0d8a59;padding:28px 20px 24px;position:sticky;top:0;z-index:10;will-change:padding,box-shadow;transition:padding 280ms cubic-bezier(.4,0,.2,1),box-shadow 280ms cubic-bezier(.4,0,.2,1);}
+.screen-header.shrunk{padding:10px 20px 10px;box-shadow:0 2px 14px rgba(0,0,0,.18);}
+.screen-tag{transition:opacity 220ms ease, max-height 220ms ease, margin-bottom 220ms ease;max-height:40px;overflow:hidden;font-size:10px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.70);margin-bottom:4px;}
+.screen-header.shrunk .screen-tag{opacity:0;max-height:0;margin-bottom:0;}
+.screen-title{transition:font-size 280ms cubic-bezier(.4,0,.2,1),letter-spacing 280ms cubic-bezier(.4,0,.2,1);font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-.5px;line-height:1.05;margin-bottom:2px;}
+.screen-header.shrunk .screen-title{font-size:18px;letter-spacing:-.2px;}
+.screen-sub{transition:opacity 240ms ease, max-height 240ms ease, margin-top 240ms ease;max-height:60px;overflow:hidden;font-size:14px;font-weight:400;color:rgba(255,255,255,0.75);margin-top:5px;line-height:1.45;}
+.screen-header.shrunk .screen-sub{opacity:0;max-height:0;margin-top:0;}
+.card{background:#ffffff;border-radius:8px;border:none;overflow:hidden;margin:0 16px 8px;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.card-title{padding:22px 16px 6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.4px;color:#767676;background:transparent;border-bottom:none;display:flex;align-items:center;}
+.screen{display:none;}
+.screen.active{display:block;animation:screenSlideIn 240ms cubic-bezier(.4,0,.2,1) both;}
+@keyframes screenSlideIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.cl-section{padding:12px 20px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#767676;border-top:1px solid #f2f2f0;}
+.cl-section:first-child{border-top:none;}
+.cl-item{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid #f5f5f2;cursor:pointer;transition:background .1s;min-height:52px;}
+.cl-item:last-child{border-bottom:none;}
+.cl-item:active{background:#f5f5f2;}
+.cl-check{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;transition:all .2s;background:#fff;}
+.cl-item.done .cl-check{background:#10A46A;border-color:#10A46A;}
+.cl-check-svg{display:none;width:12px;height:12px;}
+.cl-item.done .cl-check-svg{display:block;}
+.cl-body{flex:1;min-width:0;}
+.cl-label{font-size:15px;font-weight:500;color:#111;line-height:1.3;transition:color .2s;}
+.cl-item.done .cl-label{color:#767676;text-decoration:line-through;text-decoration-color:#767676;}
+.cl-hint{font-size:12px;color:#767676;margin-top:2px;line-height:1.3;}
+.cl-badge{font-size:11px;font-weight:600;color:#0d8a59;background:#d0f0e4;padding:3px 10px;border-radius:100px;flex-shrink:0;white-space:nowrap;}
+.hoy-progress{padding:14px 20px 10px;}
+.hoy-prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.hoy-prog-label{font-size:13px;font-weight:600;color:#111;}
+.hoy-prog-count{font-size:13px;color:#888;}
+.hoy-prog-track{height:6px;background:#f0f0ee;border-radius:100px;overflow:hidden;}
+.hoy-prog-fill{height:100%;background:#10A46A;border-radius:100px;transition:width 600ms cubic-bezier(.4,0,.2,1);}
+.bs-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:200;pointer-events:none;transition:background .25s;}
+.bs-overlay.open{background:rgba(0,0,0,0.4);pointer-events:all;}
+.bs-sheet{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;border-radius:8px 8px 0 0;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);z-index:201;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 -4px 32px rgba(0,0,0,.14);}
+.bs-overlay.open .bs-sheet{transform:translateY(0);}
+.bs-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:12px auto 0;}
+.bs-head{padding:16px 20px 10px;border-bottom:1px solid #f2f2f0;}
+.bs-title{font-size:20px;font-weight:800;color:#111;letter-spacing:-.4px;}
+.bs-current{font-size:14px;color:#888;margin-top:3px;}
+.bs-body{overflow-y:auto;flex:1;padding-bottom:env(safe-area-inset-bottom,16px);}
+.bs-chart{padding:16px 20px 8px;}
+.bs-hist-row{display:flex;justify-content:space-between;align-items:center;padding:11px 20px;border-bottom:1px solid #f5f5f2;font-size:14px;}
+.bs-hist-row:last-child{border-bottom:none;}
+.bs-hist-date{color:#888;font-size:13px;}
+.bs-hist-val{font-weight:700;color:#111;font-size:16px;}
+.bs-hist-delta{font-size:12px;font-weight:600;padding:2px 8px;border-radius:100px;margin-left:8px;}
+.delta-up{background:#fde8e8;color:#c0392b;}
+.delta-dn{background:#d0f0e4;color:#10A46A;}
+.delta-eq{background:#f0f0ee;color:#888;}
+.bs-objetivo{margin:12px 20px;padding:12px 16px;background:#f7f7f5;border-radius:8px;font-size:13px;color:#555;line-height:1.5;}
+.bs-objetivo strong{color:#10A46A;}
+.row-link{cursor:pointer;transition:background .1s;}
+.row-link:active{background:#f5f5f2;}
+.row-link .row-arrow{font-size:12px;color:#767676;margin-left:6px;}
+.tag{display:inline-flex;align-items:center;padding:4px 12px;border-radius:100px;font-size:13px;font-weight:500;border:1px solid transparent;}
+.tag.green{background:var(--md-success-container);color:var(--md-success);}
+.tag.amber{background:var(--md-warning-container);color:var(--md-warning);}
+.tag.blue{background:var(--md-secondary-container);color:var(--md-secondary);}
+.tag.purple{background:var(--md-primary-container);color:var(--md-primary);}
+.tag.red{background:var(--md-error-container);color:var(--md-error);}
+.tag.dim{background:var(--md-surface-variant);color:var(--md-on-surface-variant);}
+.note{border-radius:var(--shape-lg);padding:12px 16px;margin:0 16px 8px;font-size:13px;line-height:1.5;}
+.note.blue{background:var(--md-secondary-container);color:var(--md-on-secondary-container);}
+.note.green{background:var(--md-success-container);color:var(--md-success);}
+.note.amber{background:var(--md-warning-container);color:var(--md-warning);}
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--md-outline-variant);font-size:14px;gap:8px;min-height:48px;color:var(--md-on-surface);}
+.row:last-child{border-bottom:none;}
+.row-dim{font-size:13px;color:var(--md-on-surface-variant);}
+.day-strip{width:100%;box-sizing:border-box;display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none;background:var(--md-surface);border-bottom:1px solid var(--md-outline-variant);}
+.day-strip::-webkit-scrollbar{display:none;}
+.chip{background:#ffffff;border:1.5px solid #e8e8e4;border-radius:14px;padding:8px 10px 6px;display:flex;flex-direction:column;align-items:center;cursor:pointer;flex:1;flex-shrink:0;min-width:52px;min-height:52px;text-align:center;transition:all .2s;}
+.chip.active{background:#d0f0e4;border-color:#0d8a59;color:#0a2010;}
+.chip.past{opacity:1;}
+.chip.past .chip-num::after{content:"✓";display:block;font-size:11px;color:#767676;margin-top:1px;}
+.chip.past .chip-num{font-size:13px;color:#767676;}
+.chip-day{font-size:10px;font-weight:600;color:var(--md-on-surface-variant);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.chip.active .chip-day{color:#10A46A;}
+.chip-num{font-size:20px;font-weight:700;line-height:1.1;}
+.chip-tag{font-size:9px;margin-top:4px;padding:2px 7px;border-radius:20px;font-weight:600;display:inline-block;}
+.ct-run{background:#d0f0e4;color:#10A46A;}
+.ct-rest{background:#f0f0ee;color:#666660;}
+.ct-str{background:#d0f0e4;color:#10A46A;}
+.ct-long{background:#fdf0d5;color:#7a4f00;}
+.day-panels{padding:0 16px 16px;}
+.day-panel{display:none;}
+.day-panel.active{display:block;}
+.kcal-bar{background:#ffffff;border-radius:8px;border:none;box-shadow:0 2px 10px rgba(0,0,0,.06);padding:16px 18px;margin-bottom:8px;}
+.kcal-val{font-size:48px;font-weight:800;color:#111111;line-height:1;letter-spacing:-2.5px;}
+.kcal-val::after{content:" kcal";font-size:14px;font-weight:400;color:#767676;letter-spacing:0;}
+.kcal-sub{font-size:14px;color:#888;font-weight:400;margin-top:5px;letter-spacing:0;line-height:1.3;}
+.macro-row{display:flex;gap:8px;margin-top:10px;}
+.macro{text-align:left;background:#f7f7f5;border-radius:8px;padding:10px 12px;flex:1;}
+.mval{font-size:22px;font-weight:700;color:#111111;letter-spacing:-.3px;line-height:1;display:block;margin-bottom:1px;}
+.mlbl{font-size:12px;color:#888;font-weight:400;display:block;margin-top:3px;line-height:1.35;}
+.train-badge{padding:7px 14px;border-radius:100px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:4px;margin-bottom:10px;}
+.b-run{background:#0d8a59;color:#ffffff;}
+.b-rest{background:#ebebeb;color:#666;}
+.b-str{background:#3a5c45;color:#ffffff;}
+.b-long{background:#6b4400;color:#ffffff;}
+.meal{background:var(--md-surface);border-radius:var(--shape-xl);border:1px solid var(--md-outline-variant);overflow:hidden;margin-bottom:8px;}
+.meal-head{cursor:pointer;user-select:none;padding:16px 20px 14px;display:flex;align-items:center;background:#f8f8f6;border-bottom:1px solid #f0f0ee;gap:6px;min-height:56px;transition:background .12s;}
+.meal-head:active{background:#e6f7f0!important;}
+.meal-head::after{content:'▾';font-size:12px;color:#767676;margin-left:auto;padding-left:8px;transition:transform .2s;line-height:1;}
+.meal.collapsed .meal-head::after{content:'▸';}
+.meal.collapsed .meal-body{display:none;}
+.meal-left{min-width:0;}
+.meal-time{font-size:11px;color:#767676;font-weight:400;display:block;margin-bottom:2px;}
+.meal-name{font-size:16px;font-weight:700;color:#111111;letter-spacing:0;text-transform:uppercase;}
+.meal-kcal{font-size:12px;font-weight:600;color:#ffffff;background:#0d8a59;padding:5px 13px;border-radius:100px;white-space:nowrap;flex-shrink:0;}
+.meal-body{padding:0 0 4px;}
+.ing{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f2f2f0;font-size:15px;font-weight:400;gap:8px;min-height:50px;padding:0 20px;}
+.ing:last-child{border-bottom:none;}
+.ing-g{font-size:14px;color:#767676;font-weight:400;white-space:nowrap;}
+.meal-note{font-size:12px;color:var(--md-on-surface-variant);margin:0 16px 12px;padding:10px 12px;background:var(--md-surface-variant);border-radius:var(--shape-md);line-height:1.5;}
+.suppl{background:var(--md-surface);border-radius:var(--shape-xl);border:1px solid var(--md-outline-variant);margin-bottom:8px;overflow:hidden;}
+.suppl-title{padding:10px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--md-primary);background:var(--md-primary-container);border-bottom:1px solid var(--md-outline-variant);}
+.suppl-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:12px 16px;border-bottom:1px solid var(--md-outline-variant);gap:8px;min-height:48px;}
+.suppl-row:last-child{border-bottom:none;}
+.suppl-when{font-size:12px;color:var(--md-on-surface-variant);font-weight:500;text-align:right;}
+.plan-tabs{display:flex;overflow-x:auto;background:var(--md-surface);border-bottom:1px solid var(--md-outline-variant);scrollbar-width:none;}
+.plan-tabs::-webkit-scrollbar{display:none;}
+.plan-tab{flex-shrink:0;padding:14px 16px;font-size:14px;font-weight:500;color:var(--md-on-surface-variant);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;min-height:48px;display:flex;align-items:center;letter-spacing:.1px;transition:color 150ms ease;}
+.plan-tab.active{color:var(--md-primary);border-bottom-color:var(--md-primary);}
+.plan-panel{display:none;padding:16px;}
+.plan-panel.active{display:block;animation:panelFadeIn 180ms ease both;}
+@keyframes panelFadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.wtable{table-layout:fixed;width:100%;border-collapse:collapse;font-size:13px;}
+.wtable td:first-child,.wtable th:first-child{width:64px;}
+.wtable td:last-child,.wtable th:last-child{width:44px;}
+.wtable th{text-align:left;font-size:10px;color:var(--md-on-surface-variant);text-transform:uppercase;letter-spacing:1px;padding:8px 16px 6px;border-bottom:1px solid var(--md-outline-variant);font-weight:600;}
+.wtable td{padding:10px 16px;border-bottom:1px solid var(--md-outline-variant);vertical-align:top;}
+.wtable tr:last-child td{border-bottom:none;}
+.wday{color:var(--md-on-surface-variant);font-size:10px;font-weight:500;width:72px;}
+.wkm{color:var(--md-success);font-size:10px;font-weight:600;text-align:right;width:44px;}
+.wrest{color:var(--md-on-surface-variant);font-style:italic;}
+.wtable-title{padding:8px 16px 4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--md-on-surface-variant);}
+.wtable tr.new-session td{background:var(--md-warning-container);}
+.wtable tr.new-session .wday{color:var(--md-warning);}
+.change-badge{display:inline-block;background:var(--md-secondary-container);color:var(--md-secondary);font-size:10px;font-weight:500;padding:2px 8px;border-radius:var(--shape-full);margin-left:4px;vertical-align:middle;}
+.phase-card{background:var(--md-surface);border-radius:var(--shape-xl);border:1px solid var(--md-outline-variant);margin-bottom:8px;overflow:hidden;}
+.phase-head{background:var(--md-surface-variant);padding:16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;min-height:56px;transition:background 150ms ease;}
+.phase-head:active{background:#e6f7f0;}
+.phase-num{font-size:10px;letter-spacing:2px;font-weight:600;text-transform:uppercase;margin-bottom:3px;}
+.phase-name{font-size:clamp(18px,4vw,24px);font-weight:500;}
+.phase-dates{font-size:12px;color:var(--md-on-surface-variant);margin-top:3px;}
+.phase-arrow{font-size:16px;color:var(--md-on-surface-variant);transition:transform 280ms cubic-bezier(.4,0,.2,1);flex-shrink:0;}
+.phase-card.open .phase-arrow{transform:rotate(180deg);}
+.phase-body{display:none;border-top:1px solid var(--md-outline-variant);}
+.phase-card.open .phase-body{display:block;}
+.p1 .phase-num,.p1 .phase-name{color:var(--md-success);}
+.p2 .phase-num,.p2 .phase-name{color:var(--md-secondary);}
+.p3 .phase-num,.p3 .phase-name{color:var(--md-warning);}
+.p4 .phase-num,.p4 .phase-name{color:var(--md-primary);}
+.phase-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--md-outline-variant);}
+.phase-stat{background:var(--md-surface);padding:14px;text-align:center;}
+.ps-val{font-size:22px;font-weight:600;}
+.ps-lbl{font-size:10px;color:var(--md-on-surface-variant);text-transform:uppercase;margin-top:2px;font-weight:500;}
+.race-card{background:var(--md-surface);border-radius:var(--shape-xl);border:1px solid var(--md-outline-variant);margin-bottom:8px;overflow:hidden;transition:transform 200ms ease,box-shadow 200ms ease;}
+.race-card:active{transform:translateY(-2px);box-shadow:0 6px 20px rgba(16,164,106,.18);}
+.rc-head{padding:14px 16px 10px;background:var(--md-surface-1);border-bottom:1px solid var(--md-outline-variant);}
+.rc-title{font-size:clamp(16px,4vw,20px);font-weight:500;margin-bottom:2px;}
+.rc-date{font-size:12px;color:var(--md-on-surface-variant);margin-bottom:8px;}
+.rc-badges{display:flex;gap:4px;flex-wrap:wrap;align-items:center;}
+.rc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--md-outline-variant);}
+.rc-stats-4{grid-template-columns:repeat(4,1fr);}
+.rc-stat{background:var(--md-surface);padding:10px;text-align:center;}
+.rs-val{font-size:18px;font-weight:600;}
+.rs-lbl{font-size:10px;color:var(--md-on-surface-variant);text-transform:uppercase;margin-top:2px;font-weight:500;}
+.rc-body{padding:10px 16px;}
+.strategy{font-size:13px;color:var(--md-on-surface-variant);line-height:1.6;margin-bottom:8px;}
+.strategy strong{color:var(--md-on-surface);}
+.prob-toggle{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--md-surface-1);border-radius:var(--shape-lg);cursor:pointer;border:1px solid var(--md-outline-variant);gap:8px;min-height:52px;}
+.prob-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.prob-lbl{font-size:14px;font-weight:500;}
+.prob-sub{font-size:10px;color:var(--md-on-surface-variant);margin-top:1px;}
+.prob-arrow{font-size:16px;color:var(--md-on-surface-variant);transition:transform .3s;flex-shrink:0;}
+.prob-panel{display:none;padding:14px;border:1px solid var(--md-outline-variant);border-top:none;border-radius:0 0 var(--shape-lg) var(--shape-lg);background:var(--md-surface);margin-top:-1px;}
+.prob-panel.open{display:block;}
+.prob-before-after{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;}
+.prob-old{font-size:18px;font-weight:600;color:var(--md-on-surface-variant);text-decoration:line-through;}
+.prob-new{font-size:22px;font-weight:700;color:var(--md-success);}
+.prob-bar-track{background:var(--md-surface-variant);border-radius:var(--shape-full);height:8px;overflow:hidden;}
+.prob-bar-fill{height:8px;border-radius:var(--shape-full);}
+.prob-bar-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--md-on-surface-variant);margin-top:3px;}
+.gap-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--md-on-surface-variant);margin:10px 0 6px;}
+.gap-item{display:flex;align-items:flex-start;gap:8px;padding:10px 0;border-bottom:1px solid var(--md-outline-variant);font-size:13px;min-height:48px;}
+.gap-item:last-child{border-bottom:none;}
+.gap-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.gap-text{flex:1;line-height:1.5;color:var(--md-on-surface-variant);}
+.gap-text strong{color:var(--md-on-surface);}
+.gap-delta{font-size:10px;font-weight:600;padding:2px 6px;border-radius:var(--shape-full);flex-shrink:0;white-space:nowrap;}
+.dg{background:var(--md-success-container);color:var(--md-success);}
+.da{background:var(--md-warning-container);color:var(--md-warning);}
+.db{background:var(--md-secondary-container);color:var(--md-secondary);}
+.desp-tabs{display:flex;background:var(--md-surface);border-bottom:1px solid var(--md-outline-variant);}
+.desp-tab{flex:1;padding:14px 8px;text-align:center;cursor:pointer;font-size:14px;font-weight:500;color:var(--md-on-surface-variant);border-bottom:3px solid transparent;min-height:48px;display:flex;align-items:center;justify-content:center;}
+.desp-tab.active{color:var(--md-primary);border-bottom-color:var(--md-primary);background:var(--md-primary-container);}
+.badge-count{display:inline-block;background:var(--md-primary);color:#fff;font-size:10px;padding:1px 6px;border-radius:var(--shape-full);margin-left:4px;font-weight:600;}
+.desp-tab:last-child .badge-count{background:var(--md-error);}
+.desp-panel{display:none;}
+.desp-panel.active{display:block;}
+.desp-section{background:var(--md-surface);border-radius:var(--shape-xl);border:1px solid var(--md-outline-variant);overflow:hidden;margin:10px 16px 0;}
+.desp-sec-head{padding:10px 16px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;background:var(--md-surface-1);border-bottom:1px solid var(--md-outline-variant);color:var(--md-on-surface-variant);}
+.desp-item{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--md-outline-variant);font-size:13px;gap:8px;min-height:48px;}
+.desp-item:last-child{border-bottom:none;}
+.desp-item-info{flex:1;}
+.desp-item-note{font-size:12px;color:var(--md-on-surface-variant);margin-top:1px;}
+.btn-comprar{background:var(--md-warning-container);color:var(--md-warning);border:1px solid var(--md-warning);padding:6px 12px;border-radius:var(--shape-full);cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.compra-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--md-outline-variant);cursor:pointer;min-height:52px;}
+.compra-item:last-child{border-bottom:none;}
+.compra-item.bought{opacity:.4;}
+.compra-item.bought .compra-name{text-decoration:line-through;}
+.checkbox{width:24px;height:24px;border-radius:6px;border:2px solid var(--md-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.compra-item.bought .checkbox{background:var(--md-primary);}
+.checkmark{color:#fff;font-size:16px;display:none;}
+.compra-item.bought .checkmark{display:block;}
+.compra-name{font-size:13px;flex:1;}
+.compra-note{font-size:12px;color:var(--md-on-surface-variant);}
+.btn-all{display:block;margin:14px 16px;padding:14px;background:var(--md-primary);color:var(--md-on-primary);border:none;border-radius:var(--shape-full);cursor:pointer;font-size:14px;font-weight:600;text-align:center;width:calc(100% - 32px);}
+.desp-empty{text-align:center;padding:48px 20px;color:var(--md-on-surface-variant);}
+.desp-empty-icon{font-size:48px;display:block;margin-bottom:10px;}
+.gym-item{padding:12px 16px;border-bottom:1px solid var(--md-outline-variant);min-height:52px;display:flex;flex-direction:column;justify-content:center;}
+.gym-item-last{border-bottom:none;}
+.gym-name{font-size:14px;font-weight:800;color:#111;margin-bottom:2px;}
+.gym-detail{font-size:13px;color:var(--md-on-surface-variant);line-height:1.4;}
+.gym-ranges{padding:10px 16px 6px;background:var(--md-surface-1);}
+.gym-range-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--md-on-surface-variant);margin-bottom:8px;}
+.gym-range-unit{font-size:10px;color:var(--md-on-surface-variant);margin-top:4px;}
+.gym-pills{display:flex;flex-wrap:wrap;gap:6px;}
+.gym-pill{padding:4px 10px;background:var(--md-surface);border:1px solid var(--md-outline-variant);border-radius:var(--shape-full);font-size:12px;font-weight:500;color:var(--md-on-surface-variant);}
+.gym-pill.hi{background:var(--md-success-container);color:var(--md-success);border-color:var(--md-success);}
+.chart-wrap{background:var(--md-surface);border-radius:var(--shape-xl);border:1px solid var(--md-outline-variant);margin:8px 16px 0;padding:16px;overflow:hidden;}
+.chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.chart-ttl{font-size:12px;font-weight:500;color:var(--md-on-surface-variant);text-transform:uppercase;letter-spacing:1px;}
+.chart-leg{display:flex;gap:8px;}
+.cleg{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--md-on-surface-variant);}
+.cleg-line{width:12px;height:2px;border-radius:1px;}
+.peso-vtab{flex:1;padding:8px 0;border:1.5px solid var(--md-outline-variant);border-radius:100px;font-size:13px;font-weight:500;background:transparent;color:var(--md-on-surface-variant);cursor:pointer;transition:background 150ms ease,color 150ms ease;}
+.peso-vtab-active{background:var(--md-primary)!important;border-color:var(--md-primary)!important;color:#fff!important;font-weight:600;}
+.stat-box{background:var(--md-surface);border-radius:var(--shape-xl);border:1px solid var(--md-outline-variant);padding:14px 8px;text-align:center;}
+.stat-val{font-size:clamp(22px,5vw,30px);font-weight:600;line-height:1;}
+.stat-val.g{color:var(--md-success);}
+.stat-val.a{color:var(--md-warning);}
+.stat-lbl{font-size:10px;color:var(--md-on-surface-variant);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;font-weight:500;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-sheet{background:#fff;border-radius:8px 8px 0 0;width:100%;max-width:480px;height:80vh;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;}
+.modal-handle{width:36px;height:4px;background:#e0e0de;border-radius:2px;margin:12px auto 0;flex-shrink:0;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid #f0f0ee;flex-shrink:0;}
+.modal-title{font-size:17px;font-weight:700;color:#111;}
+.modal-close{width:32px;height:32px;border:none;background:#f0f0ee;border-radius:8px;font-size:18px;color:#555;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.modal-tabs{display:flex;border-bottom:1px solid #f0f0ee;flex-shrink:0;}
+.modal-tab{flex:1;padding:12px;font-size:13px;font-weight:600;color:#767676;text-align:center;cursor:pointer;border-bottom:2px solid transparent;}
+.modal-tab.active{color:#10A46A;border-bottom-color:#10A46A;}
+.modal-body{overflow-y:auto;flex:1;padding-bottom:24px;}
+.modal-section{padding:12px 20px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#767676;}
+.modal-row{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid #f5f5f2;min-height:48px;}
+.modal-row:last-child{border-bottom:none;}
+.modal-row-label{flex:1;font-size:15px;color:#111;font-weight:500;}
+.modal-row-sub{font-size:12px;color:#767676;margin-top:2px;}
+.modal-panel{display:none;}
+.modal-panel.active{display:block;}
+</style>
+</head>
+<body>
+<!-- ══ HOY ══ -->
+<div id="s-hoy" class="screen active">
+  <div class="screen-header">
+    <div class="screen-tag" id="hoy-tag">Hoy</div>
+    <div class="screen-title" id="hoy-title">—</div>
+    <div class="screen-sub" id="hoy-sub">—</div>
+  </div>
+  <div class="card" style="margin:12px 16px 0;">
+    <div class="hoy-progress">
+      <div class="hoy-prog-top">
+        <div class="hoy-prog-label" id="hoy-prog-label">Cargando…</div>
+        <div class="hoy-prog-count" id="hoy-prog-count"></div>
+      </div>
+      <div class="hoy-prog-track"><div class="hoy-prog-fill" id="hoy-prog-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="card" id="hoy-checklist" style="margin:12px 16px 0;"></div>
+  <div style="height:12px"></div>
+</div>
+<!-- ══ NUTRICIÓN ══ -->
+<div id="s-nutri" class="screen">
+  <div class="screen-header">
+    <div class="screen-title">🍽️ Nutrición</div>
+    <div class="screen-sub">Objetivo déficit −300 kcal/día · Semana 3</div>
+  </div>
+  <div id="sn-comidas">
+  <div class="day-strip">
+    <div class="chip" onclick="showDay(0)"><div class="chip-day">LUN</div><div class="chip-num" id="chip-n0"></div><div class="chip-tag ct-rest">Desc.</div></div>
+    <div class="chip" onclick="showDay(1)"><div class="chip-day">MAR</div><div class="chip-num" id="chip-n1"></div><div class="chip-tag ct-rest">Oficina</div></div>
+    <div class="chip" onclick="showDay(2)"><div class="chip-day">MIÉ</div><div class="chip-num" id="chip-n2"></div><div class="chip-tag ct-str">Fuerza</div></div>
+    <div class="chip" onclick="showDay(3)"><div class="chip-day">JUE</div><div class="chip-num" id="chip-n3"></div><div class="chip-tag ct-str">Fuerza</div></div>
+    <div class="chip" onclick="showDay(4)"><div class="chip-day">VIE</div><div class="chip-num" id="chip-n4"></div><div class="chip-tag ct-run">Rodaje</div></div>
+    <div class="chip" onclick="showDay(5)"><div class="chip-day">SÁB</div><div class="chip-num" id="chip-n5"></div><div class="chip-tag ct-long">Tirada</div></div>
+    <div class="chip" onclick="showDay(6)"><div class="chip-day">DOM</div><div class="chip-num" id="chip-n6"></div><div class="chip-tag ct-rest">Desc.</div></div>
+  </div>
+  <div class="day-panels">
+    <!-- D0: LUNES -->
+    <div class="day-panel" id="d0">
+      <div class="kcal-bar"><div><div class="train-badge b-rest">😴 Descanso</div></div><div><div class="kcal-val">1.750</div><div class="kcal-sub">déficit −300</div></div><div class="macro-row"><div class="macro"><div class="mval p">110g</div><div class="mlbl">Prot.</div></div><div class="macro"><div class="mval c">220g</div><div class="mlbl">Carbos</div></div><div class="macro"><div class="mval f">58g</div><div class="mlbl">Grasa</div></div></div></div>
+      <div class="meal" id="meal-d0-desayuno"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">08:00h</div><div class="meal-name">DESAYUNO</div></div><div class="meal-kcal">~500 kcal</div></div><div class="meal-body"><div class="ing"><span>Copos de avena</span><span class="ing-g">60g</span></div><div class="ing"><span>Leche de soja</span><span class="ing-g">250ml</span></div><div class="ing"><span>Plátano</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Nueces peladas</span><span class="ing-g">20g</span></div><div class="ing"><span>Café</span><span class="ing-g">1 taza</span></div></div></div>
+      <div class="meal" id="meal-d0-comida"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">13:00h</div><div class="meal-name">COMIDA</div></div><div class="meal-kcal">~620 kcal</div></div><div class="meal-body"><div class="ing"><span>Lentejas pardinas</span><span class="ing-g">90g</span></div><div class="ing"><span>Zanahoria</span><span class="ing-g">100g</span></div><div class="ing"><span>Pimientos y cebolla</span><span class="ing-g">100g</span></div><div class="ing"><span>Aceite de oliva</span><span class="ing-g">10ml</span></div></div></div>
+      <div class="meal" id="meal-d0-merienda"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">17:00h</div><div class="meal-name">MERIENDA</div></div><div class="meal-kcal">~280 kcal</div></div><div class="meal-body"><div class="ing"><span>Kéfir casero</span><span class="ing-g">200ml</span></div><div class="ing"><span>Pera</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Anacardos naturales</span><span class="ing-g">20g</span></div></div></div>
+      <div class="meal" id="meal-d0-cena"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">20:30h</div><div class="meal-name">CENA</div></div><div class="meal-kcal">~560 kcal</div></div><div class="meal-body"><div class="ing"><span>Merluza al horno</span><span class="ing-g">160g</span></div><div class="ing"><span>Patata cocida</span><span class="ing-g">120g</span></div><div class="ing"><span>Brócoli al vapor</span><span class="ing-g">150g</span></div><div class="ing"><span>Aceite de oliva</span><span class="ing-g">10ml</span></div></div></div>
+      <div class="suppl"><div class="suppl-title">💊 Suplementación</div><div class="suppl-row"><span>Malato + D3 + K2 + B12</span><span class="suppl-when">Desayuno</span></div><div class="suppl-row"><span>Bisglicinato de magnesio</span><span class="suppl-when">Cena</span></div></div>
+    </div>
+    <!-- D1: MARTES -->
+    <div class="day-panel" id="d1">
+      <div class="kcal-bar"><div><div class="train-badge b-rest">🏢 Oficina — sin entreno</div></div><div><div class="kcal-val">1.700</div><div class="kcal-sub">déficit −350</div></div><div class="macro-row"><div class="macro"><div class="mval p">115g</div><div class="mlbl">Prot.</div></div><div class="macro"><div class="mval c">210g</div><div class="mlbl">Carbos</div></div><div class="macro"><div class="mval f">55g</div><div class="mlbl">Grasa</div></div></div></div>
+      <div class="meal" id="meal-d1-desayuno"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">08:00h · oficina</div><div class="meal-name">DESAYUNO</div></div><div class="meal-kcal">~480 kcal</div></div><div class="meal-body"><div class="ing"><span>Copos de avena · oficina</span><span class="ing-g">60g</span></div><div class="ing"><span>Leche de soja · oficina</span><span class="ing-g">250ml</span></div><div class="ing"><span>Plátano · oficina</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Anacardos salados · oficina</span><span class="ing-g">20g</span></div><div class="ing"><span>Café · oficina</span><span class="ing-g">1 taza</span></div></div></div>
+      <div class="meal" id="meal-d1-comida"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">13:30h · oficina</div><div class="meal-name">COMIDA</div></div><div class="meal-kcal">~600 kcal</div></div><div class="meal-body"><div class="ing"><span>Honest Greens o ApetEat</span><span class="ing-g">1 plato</span></div><div class="meal-note">🥗 Alternar HG y ApetEat.</div></div></div>
+      <div class="meal" id="meal-d1-merienda"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">17:00h · oficina</div><div class="meal-name">MERIENDA</div></div><div class="meal-kcal">~220 kcal</div></div><div class="meal-body"><div class="ing"><span>Yogur La Fageda · oficina</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Mandarina · oficina</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Nueces · oficina</span><span class="ing-g">20g</span></div></div></div>
+      <div class="meal" id="meal-d1-cena"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">20:30h</div><div class="meal-name">CENA</div></div><div class="meal-kcal">~560 kcal</div></div><div class="meal-body"><div class="ing"><span>Salmón a la plancha</span><span class="ing-g">180g</span></div><div class="ing"><span>Patata cocida</span><span class="ing-g">130g</span></div><div class="ing"><span>Ensalada brotes tiernos</span><span class="ing-g">100g</span></div></div></div>
+      <div class="suppl"><div class="suppl-title">💊 Suplementación</div><div class="suppl-row"><span>Malato + D3 + K2 + B12</span><span class="suppl-when">Desayuno (en oficina)</span></div><div class="suppl-row"><span>Bisglicinato de magnesio</span><span class="suppl-when">Cena</span></div></div>
+    </div>
+    <!-- D2: MIÉRCOLES -->
+    <div class="day-panel" id="d2">
+      <div class="kcal-bar">
+        <div><div class="train-badge b-str">💪 Fuerza garaje A · Tren inferior · 20h</div></div>
+        <div style="margin-top:4px;"><div class="train-badge" style="background:#e8f5e9;color:#2e7d32;">✅ Completada · 23min · FC 103 · BB−1 · RPE 2/10</div></div>
+        <div><div class="kcal-val">1.850</div><div class="kcal-sub">déficit −350</div></div>
+        <div class="macro-row"><div class="macro"><div class="mval p">130g</div><div class="mlbl">Prot.</div></div><div class="macro"><div class="mval c">235g</div><div class="mlbl">Carbos</div></div><div class="macro"><div class="mval f">60g</div><div class="mlbl">Grasa</div></div></div>
+      </div>
+      <div class="meal" id="meal-d2-desayuno"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">08:00h</div><div class="meal-name">DESAYUNO</div></div><div class="meal-kcal">~500 kcal</div></div><div class="meal-body"><div class="ing"><span>Muesli de frutas</span><span class="ing-g">60g</span></div><div class="ing"><span>Leche de soja</span><span class="ing-g">250ml</span></div><div class="ing"><span>Plátano</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Nueces peladas</span><span class="ing-g">20g</span></div></div></div>
+      <div class="meal" id="meal-d2-comida"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">13:00h</div><div class="meal-name">COMIDA</div></div><div class="meal-kcal">~640 kcal</div></div><div class="meal-body"><div class="ing"><span>Pollo al horno</span><span class="ing-g">200g</span></div><div class="ing"><span>Quinoa cocida</span><span class="ing-g">70g</span></div><div class="ing"><span>Calabacín salteado</span><span class="ing-g">150g</span></div></div></div>
+      <div class="meal" id="meal-d2-merienda"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">17:00h</div><div class="meal-name">MERIENDA</div></div><div class="meal-kcal">~280 kcal</div></div><div class="meal-body"><div class="ing"><span>Yogur griego ligero</span><span class="ing-g">150g</span></div><div class="ing"><span>Pera</span><span class="ing-g">1 ud</span></div></div></div>
+      <div class="meal" id="meal-d2-cena"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">21:00h · post fuerza</div><div class="meal-name">CENA</div></div><div class="meal-kcal">~580 kcal</div></div><div class="meal-body"><div class="ing"><span>Dorada al horno</span><span class="ing-g">180g</span></div><div class="ing"><span>Patata cocida</span><span class="ing-g">130g</span></div><div class="ing"><span>Brócoli al vapor</span><span class="ing-g">150g</span></div></div></div>
+      <div class="suppl"><div class="suppl-title">💊 Suplementación</div><div class="suppl-row"><span>Malato + D3 + K2 + B12</span><span class="suppl-when">Desayuno</span></div><div class="suppl-row"><span>Colágeno 15g + zumo naranja</span><span class="suppl-when">90 min pre-entreno (~18:30h)</span></div><div class="suppl-row"><span>Bisglicinato de magnesio</span><span class="suppl-when">Cena</span></div></div>
+      <div class="note blue">💪 Garaje 20h — Joy duerme ~19:30h.</div>
+    </div>
+    <!-- D3: JUEVES -->
+    <div class="day-panel" id="d3">
+      <div class="kcal-bar">
+        <div><div class="train-badge b-str">💪 Fuerza garaje B · Tren superior + core · 20h</div></div>
+        <div><div class="kcal-val">1.850</div><div class="kcal-sub">déficit −350</div></div>
+        <div class="macro-row"><div class="macro"><div class="mval p">130g</div><div class="mlbl">Prot.</div></div><div class="macro"><div class="mval c">235g</div><div class="mlbl">Carbos</div></div><div class="macro"><div class="mval f">60g</div><div class="mlbl">Grasa</div></div></div>
+      </div>
+      <div class="note" style="background:#fff3e0;border-left:4px solid #ef6c00;border-radius:8px;padding:10px 14px;font-size:12px;color:#bf360c;margin:0 0 8px;">⚠️ <strong>Training Status: Strained · BB 27 · HRV 30ms Low</strong> — si esta mañana BB &lt;35, sustituir por movilidad/foam roller.</div>
+      <div class="meal" id="meal-d3-desayuno"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">08:00h</div><div class="meal-name">DESAYUNO</div></div><div class="meal-kcal">~500 kcal</div></div><div class="meal-body"><div class="ing"><span>Muesli de frutas</span><span class="ing-g">60g</span></div><div class="ing"><span>Leche de soja</span><span class="ing-g">250ml</span></div><div class="ing"><span>Plátano</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Nueces peladas</span><span class="ing-g">20g</span></div></div></div>
+      <div class="meal" id="meal-d3-comida"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">13:00h</div><div class="meal-name">COMIDA</div></div><div class="meal-kcal">~640 kcal</div></div><div class="meal-body"><div class="ing"><span>Tofu firme salteado</span><span class="ing-g">200g</span></div><div class="ing"><span>Arroz integral</span><span class="ing-g">70g</span></div><div class="ing"><span>Mix de setas</span><span class="ing-g">150g</span></div></div></div>
+      <div class="meal" id="meal-d3-merienda"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">17:00h</div><div class="meal-name">MERIENDA</div></div><div class="meal-kcal">~280 kcal</div></div><div class="meal-body"><div class="ing"><span>Kéfir casero</span><span class="ing-g">150ml</span></div><div class="ing"><span>Mandarina</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Anacardos naturales</span><span class="ing-g">20g</span></div></div></div>
+      <div class="meal" id="meal-d3-cena"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">21:00h · post fuerza</div><div class="meal-name">CENA</div></div><div class="meal-kcal">~580 kcal</div></div><div class="meal-body"><div class="ing"><span>Salmón al horno</span><span class="ing-g">180g</span></div><div class="ing"><span>Batata al horno</span><span class="ing-g">150g</span></div><div class="ing"><span>Champiñones salteados</span><span class="ing-g">120g</span></div></div></div>
+      <div class="suppl"><div class="suppl-title">💊 Suplementación</div><div class="suppl-row"><span>Malato + D3 + K2 + B12</span><span class="suppl-when">Desayuno</span></div><div class="suppl-row"><span>Colágeno 15g + zumo naranja</span><span class="suppl-when">90 min pre-entreno (~18:30h)</span></div><div class="suppl-row"><span>Bisglicinato de magnesio</span><span class="suppl-when">Cena</span></div></div>
+    </div>
+    <!-- D4: VIERNES -->
+    <div class="day-panel" id="d4">
+      <div class="kcal-bar">
+        <div><div class="train-badge b-run">🏃 Rodaje Z1-Z2 · 6 km · FC &lt;150 · ~19h</div></div>
+        <div><div class="kcal-val">1.950</div><div class="kcal-sub">déficit −300</div></div>
+        <div class="macro-row"><div class="macro"><div class="mval p">130g</div><div class="mlbl">Prot.</div></div><div class="macro"><div class="mval c">250g</div><div class="mlbl">Carbos</div></div><div class="macro"><div class="mval f">62g</div><div class="mlbl">Grasa</div></div></div>
+      </div>
+      <div class="note" style="background:#fff3e0;border-left:4px solid #ef6c00;border-radius:8px;padding:10px 14px;font-size:12px;color:#bf360c;margin:0 0 8px;">⚠️ <strong>Primer rodaje post-resfriado · Strained.</strong> FC &lt;150 estricto. Si no te encuentras bien, 30 min caminata Z1.</div>
+      <div class="meal" id="meal-d4-desayuno"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">08:00h</div><div class="meal-name">DESAYUNO</div></div><div class="meal-kcal">~500 kcal</div></div><div class="meal-body"><div class="ing"><span>Muesli de frutas</span><span class="ing-g">60g</span></div><div class="ing"><span>Leche de soja</span><span class="ing-g">250ml</span></div><div class="ing"><span>Plátano</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Nueces peladas</span><span class="ing-g">20g</span></div></div></div>
+      <div class="meal" id="meal-d4-comida"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">13:00h</div><div class="meal-name">COMIDA</div></div><div class="meal-kcal">~640 kcal</div></div><div class="meal-body"><div class="ing"><span>Pechuga de pollo</span><span class="ing-g">200g</span></div><div class="ing"><span>Pasta integral</span><span class="ing-g">80g</span></div><div class="ing"><span>Ensalada brotes tiernos</span><span class="ing-g">80g</span></div><div class="meal-note">💡 Come antes de las 14h — margen antes del rodaje.</div></div></div>
+      <div class="meal" id="meal-d4-merienda"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">17:30h</div><div class="meal-name">MERIENDA</div></div><div class="meal-kcal">~300 kcal</div></div><div class="meal-body"><div class="ing"><span>Kéfir casero</span><span class="ing-g">150ml</span></div><div class="ing"><span>Mandarina</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Anacardos naturales</span><span class="ing-g">20g</span></div><div class="meal-note">⚡ Colágeno 90 min pre-rodaje (~17:30h).</div></div></div>
+      <div class="meal" id="meal-d4-cena"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">20:30h · post rodaje</div><div class="meal-name">CENA</div></div><div class="meal-kcal">~560 kcal</div></div><div class="meal-body"><div class="ing"><span>Huevos revueltos propios</span><span class="ing-g">3 uds</span></div><div class="ing"><span>Tostadas pan integral</span><span class="ing-g">2 rebanadas</span></div><div class="ing"><span>Tomates cherry</span><span class="ing-g">80g</span></div></div></div>
+      <div class="suppl"><div class="suppl-title">💊 Suplementación</div><div class="suppl-row"><span>Malato + D3 + K2 + B12</span><span class="suppl-when">Desayuno</span></div><div class="suppl-row"><span>Colágeno 15g + zumo naranja</span><span class="suppl-when">90 min pre-rodaje (~17:30h)</span></div><div class="suppl-row"><span>Bisglicinato de magnesio</span><span class="suppl-when">Cena</span></div></div>
+      <div class="note blue">💧 FC &lt;150 estricto. Z1-Z2. Primer rodaje post-resfriado.</div>
+    </div>
+    <!-- D5: SÁBADO -->
+    <div class="day-panel" id="d5">
+      <div class="kcal-bar">
+        <div><div class="train-badge b-long">🏔️ Tirada trail Z2 · 10-12 km · FC &lt;155 · 15h</div></div>
+        <div><div class="kcal-val">2.300</div><div class="kcal-sub">déficit −250</div></div>
+        <div class="macro-row"><div class="macro"><div class="mval p">140g</div><div class="mlbl">Prot.</div></div><div class="macro"><div class="mval c">340g</div><div class="mlbl">Carbos</div></div><div class="macro"><div class="mval f">70g</div><div class="mlbl">Grasa</div></div></div>
+      </div>
+      <div class="meal" id="meal-d5-desayuno"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">09:00h</div><div class="meal-name">DESAYUNO</div></div><div class="meal-kcal">~620 kcal</div></div><div class="meal-body"><div class="ing"><span>Muesli de frutas</span><span class="ing-g">65g</span></div><div class="ing"><span>Leche de soja</span><span class="ing-g">250ml</span></div><div class="ing"><span>Plátano</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Nueces peladas</span><span class="ing-g">25g</span></div><div class="meal-note">⚡ Desayuno grande 3h antes de salir.</div></div></div>
+      <div class="meal" id="meal-d5-comida"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">12:00h</div><div class="meal-name">COMIDA PRE-TIRADA</div></div><div class="meal-kcal">~480 kcal</div></div><div class="meal-body"><div class="ing"><span>Tortillas integrales</span><span class="ing-g">2 uds</span></div><div class="ing"><span>Hummus</span><span class="ing-g">80g</span></div><div class="ing"><span>Aguacate</span><span class="ing-g">1/2 ud</span></div><div class="ing"><span>Huevo duro propio</span><span class="ing-g">1 ud</span></div></div></div>
+      <div class="meal" id="meal-d5-merienda"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">17:30h · post tirada</div><div class="meal-name">MERIENDA</div></div><div class="meal-kcal">~370 kcal</div></div><div class="meal-body"><div class="ing"><span>Kéfir casero</span><span class="ing-g">150ml</span></div><div class="ing"><span>Plátano</span><span class="ing-g">1 ud</span></div><div class="ing"><span>Anacardos naturales</span><span class="ing-g">30g</span></div><div class="meal-note">⚡ Come en 30-45 min post-tirada.</div></div></div>
+      <div class="meal" id="meal-d5-cena"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">20:30h</div><div class="meal-name">CENA</div></div><div class="meal-kcal">~700 kcal</div></div><div class="meal-body"><div class="ing"><span>Salmón al horno</span><span class="ing-g">200g</span></div><div class="ing"><span>Batata al horno</span><span class="ing-g">200g</span></div><div class="ing"><span>Brócoli al vapor</span><span class="ing-g">150g</span></div></div></div>
+      <div class="suppl"><div class="suppl-title">💊 Suplementación</div><div class="suppl-row"><span>Malato + D3 + K2 + B12</span><span class="suppl-when">Desayuno</span></div><div class="suppl-row"><span>Colágeno 15g + zumo naranja</span><span class="suppl-when">90 min pre-tirada (~13:30h)</span></div><div class="suppl-row"><span>Bisglicinato de magnesio</span><span class="suppl-when">Cena</span></div></div>
+      <div class="note blue">💧 2.5L + sales en ruta. Sin forzar — recuperación post-resfriado.</div>
+    </div>
+    <!-- D6: DOMINGO -->
+    <div class="day-panel" id="d6">
+      <div class="kcal-bar"><div><div class="train-badge b-rest">😴 Descanso — familia</div></div><div><div class="kcal-val">1.650</div><div class="kcal-sub">déficit −400</div></div><div class="macro-row"><div class="macro"><div class="mval p">120g</div><div class="mlbl">Prot.</div></div><div class="macro"><div class="mval c">205g</div><div class="mlbl">Carbos</div></div><div class="macro"><div class="mval f">52g</div><div class="mlbl">Grasa</div></div></div></div>
+      <div class="meal" id="meal-d6-desayuno"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">09:00h</div><div class="meal-name">DESAYUNO</div></div><div class="meal-kcal">~520 kcal</div></div><div class="meal-body"><div class="ing"><span>Tostadas pan integral</span><span class="ing-g">2 rebanadas</span></div><div class="ing"><span>Aguacate</span><span class="ing-g">1/2 ud</span></div><div class="ing"><span>Huevos revueltos propios</span><span class="ing-g">3 uds</span></div><div class="ing"><span>Tomates cherry</span><span class="ing-g">80g</span></div></div></div>
+      <div class="meal" id="meal-d6-comida"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">14:00h</div><div class="meal-name">COMIDA</div></div><div class="meal-kcal">~580 kcal</div></div><div class="meal-body"><div class="ing"><span>Lentejas o garbanzos</span><span class="ing-g">90g</span></div><div class="ing"><span>Verdura de temporada</span><span class="ing-g">150g</span></div><div class="ing"><span>Pechuga de pollo</span><span class="ing-g">100g</span></div></div></div>
+      <div class="meal" id="meal-d6-merienda"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">17:30h</div><div class="meal-name">MERIENDA</div></div><div class="meal-kcal">~200 kcal</div></div><div class="meal-body"><div class="ing"><span>Kéfir casero</span><span class="ing-g">200ml</span></div><div class="ing"><span>Fresones o arándanos</span><span class="ing-g">150g</span></div><div class="ing"><span>Nueces</span><span class="ing-g">15g</span></div></div></div>
+      <div class="meal" id="meal-d6-cena"><div class="meal-head" onclick="toggleMeal(this)"><div class="meal-left"><div class="meal-time">20:30h</div><div class="meal-name">CENA</div></div><div class="meal-kcal">~420 kcal</div></div><div class="meal-body"><div class="ing"><span>Ensalada brotes + cherry</span><span class="ing-g">150g</span></div><div class="ing"><span>Tofu firme salteado</span><span class="ing-g">150g</span></div><div class="ing"><span>Champiñones</span><span class="ing-g">100g</span></div></div></div>
+      <div class="suppl"><div class="suppl-title">💊 Suplementación</div><div class="suppl-row"><span>Malato + D3 + K2 + B12</span><span class="suppl-when">Desayuno</span></div><div class="suppl-row"><span>Bisglicinato de magnesio</span><span class="suppl-when">Cena</span></div></div>
+      <div class="note green">✅ Foam roller piernas 10 min.</div>
+    </div>
+  </div>
+  <div style="margin:4px 16px 16px;text-align:center;">
+    <button onclick="openDespModal()" style="background:none;border:1px solid #e0e0dc;border-radius:8px;padding:10px 20px;font-size:13px;color:#767676;cursor:pointer;width:100%;font-weight:500;">🥫 Ver despensa completa</button>
+  </div>
+  </div>
+</div>
+<!-- ══ PLAN ══ -->
+<div id="s-plan" class="screen">
+  <div class="screen-header">
+    <div class="screen-tag">Plan · 54 semanas · Fase 1 · Sem 3</div>
+    <div class="screen-title">🏃 Maratón BCN 2027</div>
+    <div class="screen-sub">Semana 3 de 16 · 9–15 mar · Base Aeróbica</div>
+  </div>
+  <div class="plan-tabs">
+    <div class="plan-tab active" onclick="showPlanTab('pt-esta-semana',this)">Esta semana</div>
+    <div class="plan-tab" onclick="showPlanTab('pt-carreras',this)">Carreras</div>
+    <div class="plan-tab" onclick="showPlanTab('pt-fases',this)">Fases</div>
+  </div>
+  <div id="pt-esta-semana" class="plan-panel active">
+    <div style="background:var(--md-success-container);border-left:4px solid var(--md-success);border-radius:8px;padding:8px 12px;margin-bottom:16px;font-size:12px;color:var(--md-success);font-weight:700;">
+      FASE 1 · Semana 3 de 16 · 9–15 mar 2026 · <span style="font-weight:400;">Base pura — recuperación resfriado</span>
+    </div>
+    <div style="background:#fff3e0;border-left:4px solid #ef6c00;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#bf360c;line-height:1.6;">
+      ⚠️ <strong>Garmin Strained</strong> · BB 27 · HRV 30ms Low (11 mar). Semana muy ligera. Si jueves BB &lt;35 → sustituir Fuerza B por movilidad.
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+      <div style="background:var(--md-surface);border:1px solid var(--md-outline-variant);border-radius:12px;padding:12px;text-align:center;"><div style="font-size:20px;font-weight:800;color:var(--md-success);">16</div><div style="font-size:10px;color:#888;margin-top:2px;">km planif.</div></div>
+      <div style="background:var(--md-surface);border:1px solid var(--md-outline-variant);border-radius:12px;padding:12px;text-align:center;"><div style="font-size:20px;font-weight:800;color:#5c6bc0;">2</div><div style="font-size:10px;color:#888;margin-top:2px;">fuerza</div></div>
+      <div style="background:var(--md-surface);border:1px solid var(--md-outline-variant);border-radius:12px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#ef6c00;">⚠️</div><div style="font-size:10px;color:#888;margin-top:2px;">Strained</div></div>
+    </div>
+    <div style="background:var(--md-surface);border-radius:12px;border:1px solid var(--md-outline-variant);overflow:hidden;margin-bottom:16px;">
+      <table class="wtable">
+        <tr><th>Día</th><th>Sesión</th><th>km</th></tr>
+        <tr><td class="wday">LUN 9</td><td class="wrest">😴 Descanso — resfriado</td><td class="wkm">—</td></tr>
+        <tr><td class="wday">MAR 10</td><td class="wrest">🏢 Oficina — sin entreno</td><td class="wkm">—</td></tr>
+        <tr style="background:#f0faf4;"><td class="wday">MIÉ 11</td><td>💪 Fuerza A · Tren inferior · 20h <span style="background:#e8f5e9;color:#2e7d32;font-size:10px;padding:2px 6px;border-radius:10px;margin-left:4px;">✅ 23min</span></td><td class="wkm">—</td></tr>
+        <tr><td class="wday">JUE 12</td><td>💪 Fuerza B · Tren superior + core · 20h</td><td class="wkm">35 min</td></tr>
+        <tr style="background:#fff8f0;"><td class="wday">VIE 13</td><td>🏃 Rodaje Z1-Z2 · FC &lt;150 · Primer post-resfriado <span style="background:#fdf0d5;color:#7a4f00;font-size:10px;padding:2px 6px;border-radius:10px;margin-left:4px;">HOY</span></td><td class="wkm">6</td></tr>
+        <tr><td class="wday">SÁB 14</td><td>🏔️ Tirada trail Z2 · FC &lt;155 · Sin forzar</td><td class="wkm">10–12</td></tr>
+        <tr><td class="wday">DOM 15</td><td class="wrest">😴 Descanso — familia</td><td class="wkm">—</td></tr>
+      </table>
+    </div>
+    <div style="font-size:13px;font-weight:700;color:#333;margin-bottom:8px;">💪 Sesiones de fuerza — detalle</div>
+    <div style="background:var(--md-surface);border:1px solid var(--md-outline-variant);border-radius:12px;padding:14px;margin-bottom:10px;">
+      <div style="font-weight:700;font-size:13px;margin-bottom:10px;">Fuerza A · Miércoles ✅ — Tren inferior + glúteos</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;">
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">🦵 Sentadilla goblet<br><span style="color:#888;">3×10 · MC 16kg</span></div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">🏋️ Hip thrust<br><span style="color:#888;">3×12 · 22kg</span></div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">🦵 Zancadas inversas<br><span style="color:#888;">3×10 c/lado · 2×10kg</span></div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">🐸 Puente glúteo unilateral<br><span style="color:#888;">3×12 c/lado</span></div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">📦 Step-up plyo box<br><span style="color:#888;">3×8 c/lado · 2×12kg</span></div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">🧘 Plancha isométrica<br><span style="color:#888;">3×30s</span></div>
+      </div>
+    </div>
+    <div style="background:var(--md-surface);border:1px solid var(--md-outline-variant);border-radius:12px;padding:14px;margin-bottom:16px;">
+      <div style="font-weight:700;font-size:13px;margin-bottom:10px;">Fuerza B · Jueves — Tren superior + core</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;">
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">💪 Press banca inclinado<br><span style="color:#888;">3×10 · 2×18kg</span></div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">🏋️ Remo con mancuerna<br><span style="color:#888;">3×12 c/lado · 20kg</span></div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">💪 Press militar de pie<br><span style="color:#888;">3×10 · 2×14kg</span></div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">🏃 Curl femoral TecTake<br><span style="color:#888;">3×12</span></div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">🧘 Dead bug<br><span style="color:#888;">3×10 c/lado</span></div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:8px;">🔄 Rotación rusa<br><span style="color:#888;">3×15 · 8kg</span></div>
+      </div>
+    </div>
+  </div>
+  <div id="pt-carreras" class="plan-panel">
+    <div class="race-card">
+      <div class="rc-head"><div class="rc-title">Salomon Run Montjuïc</div><div class="rc-date">Abril 2026 · ~6 sem.</div><div class="rc-badges"><span class="tag amber">Trail 9.4K</span>&nbsp;<span class="tag green">✅ Inscrito</span></div></div>
+      <div class="rc-stats rc-stats-4"><div class="rc-stat"><div class="rs-val" style="color:var(--md-warning)">9.4K</div><div class="rs-lbl">Distancia</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-warning)">+238m</div><div class="rs-lbl">Desnivel</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-error)">1h30</div><div class="rs-lbl">Límite</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-success)">~1h15</div><div class="rs-lbl">Objetivo</div></div></div>
+      <div class="rc-body"><p class="strategy"><strong>Estrategia:</strong> Ritmo 8:00 min/km objetivo · caminar rampas &gt;12% · sales desde km 3.</p>
+      <div class="prob-toggle" onclick="toggleProb('ps1')"><div style="display:flex;align-items:center;gap:8px;"><div class="prob-circle" style="background:var(--md-success-container);color:var(--md-success)">92%</div><div><div class="prob-lbl">Probabilidad de acabar en tiempo</div><div class="prob-sub">Límite 1h30 · actualizado mar 2026</div></div></div><div class="prob-arrow" id="pa-ps1">▾</div></div>
+      <div class="prob-panel" id="ps1"><div class="prob-before-after"><span class="prob-old">88%</span><span style="color:#888;">→</span><span class="prob-new">92%</span></div><div style="margin:0 0 8px;"><div class="prob-bar-track"><div class="prob-bar-fill" style="width:92%;background:var(--md-success)"></div></div><div class="prob-bar-labels"><span>0%</span><span style="color:var(--md-success);font-weight:700">92%</span><span>100%</span></div></div></div></div>
+    </div>
+    <div class="race-card">
+      <div class="rc-head"><div class="rc-title">Cursa de la Diagonal</div><div class="rc-date">24 Mayo 2026 · ~11 sem.</div><div class="rc-badges"><span class="tag blue">Asfalto 10K</span>&nbsp;<span class="tag green">✅ Inscrito</span></div></div>
+      <div class="rc-stats"><div class="rc-stat"><div class="rs-val" style="color:var(--md-secondary)">10K</div><div class="rs-lbl">Distancia</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-secondary)">−71m</div><div class="rs-lbl">Desnivel</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-secondary)">&lt;55:00</div><div class="rs-lbl">Objetivo</div></div></div>
+      <div class="rc-body"><p class="strategy"><strong>Estrategia:</strong> Velocity Nitro 4 · conservador km 0-3 (subida) · dar todo bajada final.</p>
+      <div class="prob-toggle" onclick="toggleProb('ps2')"><div style="display:flex;align-items:center;gap:8px;"><div class="prob-circle" style="background:var(--md-warning-container);color:var(--md-warning)">82%</div><div><div class="prob-lbl">Probabilidad de sub 55:00</div><div class="prob-sub">Antes: 71% → Ahora: 82%</div></div></div><div class="prob-arrow" id="pa-ps2">▾</div></div>
+      <div class="prob-panel" id="ps2"><div class="prob-before-after"><span class="prob-old">71%</span><span style="color:#888;">→</span><span class="prob-new">82%</span></div><div><div class="prob-bar-track"><div class="prob-bar-fill" style="width:82%;background:var(--md-warning)"></div></div><div class="prob-bar-labels"><span>0%</span><span style="color:var(--md-warning);font-weight:700">82%</span><span>100%</span></div></div></div></div>
+    </div>
+    <div class="race-card">
+      <div class="rc-head"><div class="rc-title">Marca Bonesvalls Trail</div><div class="rc-date">18 Oct 2026 · ~31 sem.</div><div class="rc-badges"><span class="tag amber">Trail 26K</span>&nbsp;<span class="tag green">✅ Fecha confirmada</span></div></div>
+      <div class="rc-stats"><div class="rc-stat"><div class="rs-val" style="color:var(--md-warning)">26K</div><div class="rs-lbl">Distancia</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-warning)">Alto</div><div class="rs-lbl">Desnivel</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-success)">Completar</div><div class="rs-lbl">Objetivo</div></div></div>
+      <div class="rc-body"><p class="strategy"><strong>Estrategia:</strong> Caminar todas las subidas · gel y sales cada 45 min · no estrenar nada.</p>
+      <div class="prob-toggle" onclick="toggleProb('ps3')"><div style="display:flex;align-items:center;gap:8px;"><div class="prob-circle" style="background:var(--md-success-container);color:var(--md-success)">91%</div><div><div class="prob-lbl">Probabilidad de completarla</div><div class="prob-sub">Antes: 84% → Ahora: 91%</div></div></div><div class="prob-arrow" id="pa-ps3">▾</div></div>
+      <div class="prob-panel" id="ps3"><div class="prob-before-after"><span class="prob-old">84%</span><span style="color:#888;">→</span><span class="prob-new">91%</span></div><div><div class="prob-bar-track"><div class="prob-bar-fill" style="width:91%;background:var(--md-success)"></div></div><div class="prob-bar-labels"><span>0%</span><span style="color:var(--md-success);font-weight:700">91%</span><span>100%</span></div></div></div></div>
+    </div>
+    <div class="race-card">
+      <div class="rc-head"><div class="rc-title">Mitja Marató Barcelona</div><div class="rc-date">~15 Feb 2027 · ~49 sem.</div><div class="rc-badges"><span class="tag purple">21K asfalto</span>&nbsp;<span class="tag amber">⚠️ Abre verano</span></div></div>
+      <div class="rc-stats"><div class="rc-stat"><div class="rs-val" style="color:var(--md-primary)">22.2K</div><div class="rs-lbl">Distancia</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-primary)">+37m</div><div class="rs-lbl">Desnivel</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-primary)">&lt;2:15h</div><div class="rs-lbl">Objetivo</div></div></div>
+      <div class="rc-body"><p class="strategy"><strong>Estrategia:</strong> 6:03/km · test definitivo de forma · sub-2:10 asegura maratón sub-5h.</p>
+      <div class="prob-toggle" onclick="toggleProb('ps4')"><div style="display:flex;align-items:center;gap:8px;"><div class="prob-circle" style="background:var(--md-primary-container);color:var(--md-primary)">83%</div><div><div class="prob-lbl">Probabilidad de sub 2:15h</div><div class="prob-sub">Antes: 74% → Ahora: 83%</div></div></div><div class="prob-arrow" id="pa-ps4">▾</div></div>
+      <div class="prob-panel" id="ps4"><div class="prob-before-after"><span class="prob-old">74%</span><span style="color:#888;">→</span><span class="prob-new">83%</span></div><div><div class="prob-bar-track"><div class="prob-bar-fill" style="width:83%;background:var(--md-primary)"></div></div><div class="prob-bar-labels"><span>0%</span><span style="color:var(--md-primary);font-weight:700">83%</span><span>100%</span></div></div></div></div>
+    </div>
+    <div class="race-card">
+      <div class="rc-head"><div class="rc-title">Maratón Barcelona 🎯</div><div class="rc-date">2 Mar 2027 · ~53 sem.</div><div class="rc-badges"><span class="tag red">42K asfalto</span>&nbsp;<span class="tag amber">⚠️ Abre junio</span></div></div>
+      <div class="rc-stats"><div class="rc-stat"><div class="rs-val" style="color:var(--md-error)">43.1K</div><div class="rs-lbl">Distancia</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-error)">+222m</div><div class="rs-lbl">Desnivel</div></div><div class="rc-stat"><div class="rs-val" style="color:var(--md-error)">&lt;5:00h</div><div class="rs-lbl">Objetivo</div></div></div>
+      <div class="rc-body"><p class="strategy"><strong>Km 0-14:</strong> 7:20/km. <strong>Km 14-30:</strong> 7:00-7:10/km. <strong>Km 30-42:</strong> gestionar el muro. Gel cada 40-45 min desde km 10.</p>
+      <div class="prob-toggle" onclick="toggleProb('ps5')"><div style="display:flex;align-items:center;gap:8px;"><div class="prob-circle" style="background:var(--md-warning-container);color:var(--md-warning)">87%</div><div><div class="prob-lbl">Probabilidad de sub 5:00h</div><div class="prob-sub">Antes: 82% → Ahora: 87%</div></div></div><div class="prob-arrow" id="pa-ps5">▾</div></div>
+      <div class="prob-panel" id="ps5"><div class="prob-before-after"><span class="prob-old">82%</span><span style="color:#888;">→</span><span class="prob-new">87%</span></div><div><div class="prob-bar-track"><div class="prob-bar-fill" style="width:87%;background:var(--md-error)"></div></div><div class="prob-bar-labels"><span>0%</span><span style="color:var(--md-error);font-weight:700">87%</span><span>100%</span></div></div></div></div>
+    </div>
+  </div>
+  <div id="pt-fases" class="plan-panel">
+    <div class="phase-card p1 open">
+      <div class="phase-head" onclick="this.parentElement.classList.toggle('open')"><div><div class="phase-num">Fase 01</div><div class="phase-name">Base Aeróbica</div><div class="phase-dates">Marzo → Junio 2026 · 16 sem. · ACTUAL</div></div><div class="phase-arrow">▾</div></div>
+      <div class="phase-body">
+        <div class="phase-stats"><div class="phase-stat"><div class="ps-val" style="color:var(--md-success)">20-35</div><div class="ps-lbl">km/sem</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-success)">3</div><div class="ps-lbl">sesiones</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-success)">&lt;155</div><div class="ps-lbl">FC máx</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-success)">80%</div><div class="ps-lbl">Zona 2</div></div></div>
+        <div class="wtable-title">Sem 1–3 · Base pura (AHORA)</div>
+        <table class="wtable"><tr><th>Día</th><th>Sesión</th><th>km</th></tr><tr><td class="wday">LUN</td><td class="wrest">😴 Descanso</td><td class="wkm">—</td></tr><tr><td class="wday">MAR</td><td class="wrest">🏢 Oficina</td><td class="wkm">—</td></tr><tr><td class="wday">MIÉ 20h</td><td>💪 Fuerza garaje A · Tren inferior</td><td class="wkm">35 min</td></tr><tr><td class="wday">JUE 20h</td><td>💪 Fuerza garaje B · Tren superior</td><td class="wkm">35 min</td></tr><tr><td class="wday">VIE 19h</td><td>🏃 Rodaje suave Z2 · FC &lt;155</td><td class="wkm">6-8</td></tr><tr><td class="wday">SÁB 15h</td><td>🏔️ Tirada trail Z2 · Electrify Nitro 4</td><td class="wkm">10-14</td></tr><tr><td class="wday">DOM</td><td class="wrest">😴 Familia</td><td class="wkm">—</td></tr></table>
+        <div class="wtable-title">Sem 4–8 · Strides + desnivel <span class="change-badge">✦ Nuevo</span></div>
+        <table class="wtable"><tr><th>Día</th><th>Sesión</th><th>km</th></tr><tr><td class="wday">MIÉ 20h</td><td>💪 Fuerza A</td><td class="wkm">—</td></tr><tr><td class="wday">JUE 20h</td><td>💪 Fuerza B</td><td class="wkm">—</td></tr><tr class="new-session"><td class="wday">VIE 19h</td><td>🏃 Rodaje Z2 + 6×20 seg strides al final</td><td class="wkm">7-9</td></tr><tr class="new-session"><td class="wday">SÁB 15h</td><td>🏔️ Tirada trail desnivel progresivo 80-150m D+</td><td class="wkm">12-16</td></tr></table>
+        <div style="height:8px"></div>
+      </div>
+    </div>
+    <div class="phase-card p2">
+      <div class="phase-head" onclick="this.parentElement.classList.toggle('open')"><div><div class="phase-num">Fase 02</div><div class="phase-name">Desarrollo</div><div class="phase-dates">Julio → Sep 2026 · 13 sem.</div></div><div class="phase-arrow">▾</div></div>
+      <div class="phase-body"><div class="phase-stats"><div class="phase-stat"><div class="ps-val" style="color:var(--md-secondary)">35-48</div><div class="ps-lbl">km/sem</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-secondary)">4</div><div class="ps-lbl">sesiones</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-secondary)">&lt;165</div><div class="ps-lbl">FC máx</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-secondary)">300m+</div><div class="ps-lbl">D+ mín</div></div></div><div style="height:8px"></div></div>
+    </div>
+    <div class="phase-card p3">
+      <div class="phase-head" onclick="this.parentElement.classList.toggle('open')"><div><div class="phase-num">Fase 03</div><div class="phase-name">Específica Maratón</div><div class="phase-dates">Nov → Dic 2026 · 13 sem.</div></div><div class="phase-arrow">▾</div></div>
+      <div class="phase-body"><div class="phase-stats"><div class="phase-stat"><div class="ps-val" style="color:var(--md-warning)">50-60</div><div class="ps-lbl">km/sem</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-warning)">4-5</div><div class="ps-lbl">sesiones</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-warning)">28-32</div><div class="ps-lbl">km tirada</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-warning)">7:00</div><div class="ps-lbl">min/km</div></div></div><div style="height:8px"></div></div>
+    </div>
+    <div class="phase-card p4">
+      <div class="phase-head" onclick="this.parentElement.classList.toggle('open')"><div><div class="phase-num">Fase 04</div><div class="phase-name">Pico &amp; Tapering</div><div class="phase-dates">Ene → 2 Mar 2027 · 8 sem.</div></div><div class="phase-arrow">▾</div></div>
+      <div class="phase-body"><div class="phase-stats"><div class="phase-stat"><div class="ps-val" style="color:var(--md-primary)">55-65</div><div class="ps-lbl">km pico</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-primary)">3</div><div class="ps-lbl">sem. taper</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-primary)">32km</div><div class="ps-lbl">simulacro</div></div><div class="phase-stat"><div class="ps-val" style="color:var(--md-error)">2 MAR</div><div class="ps-lbl">Día D</div></div></div><div style="height:8px"></div></div>
+    </div>
+  </div>
+</div>
+<!-- ══ MEDIDAS ══ -->
+<div id="s-med" class="screen">
+  <div class="screen-header">
+    <div class="screen-tag">Seguimiento · Composición corporal</div>
+    <div class="screen-title">📏 Medidas</div>
+    <div class="screen-sub">Peso diario · Próxima medición: 1 abr</div>
+  </div>
+  <div class="chart-wrap" style="margin-top:12px;">
+    <div class="chart-header"><div class="chart-ttl">Evolución del peso</div></div>
+    <div style="display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap;"><button class="peso-vtab peso-vtab-active" onclick="setPesoView('dia',this)">Diario</button><button class="peso-vtab" onclick="setPesoView('sem',this)">Semanal</button><button class="peso-vtab" onclick="setPesoView('mes',this)">Mensual</button></div>
+    <div id="wChart2" style="width:100%;"></div>
+  </div>
+  <div class="card-title" style="margin-top:16px;">⌚ Garmin · 13 mar 2026 · 06:29h</div>
+  <div class="card" style="margin-top:12px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #f2f2f0;">
+      <div style="padding:16px 18px 14px;border-right:1px solid #f2f2f0;"><div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Training Status</div><div style="font-size:22px;font-weight:800;color:#10A46A;">Recovery</div><div style="font-size:12px;color:#10A46A;margin-top:4px;font-weight:600;">✓ Desde 13 mar</div></div>
+      <div style="padding:16px 18px 14px;"><div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">VO₂ Max</div><div style="font-size:32px;font-weight:800;color:#10A46A;line-height:1;">45</div><div style="font-size:12px;color:#888;margin-top:4px;">Good ✓</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #f2f2f0;">
+      <div style="padding:14px 18px 14px;border-right:1px solid #f2f2f0;"><div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">HRV Status</div><div style="font-size:22px;font-weight:800;color:#b8860b;">31 ms</div><div style="font-size:12px;color:#b8860b;margin-top:4px;font-weight:600;">■ Unbalanced · 7d avg</div></div>
+      <div style="padding:14px 18px 14px;"><div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Body Battery</div><div style="font-size:32px;font-weight:800;color:#10A46A;line-height:1;">60</div><div style="font-size:12px;color:#10A46A;margin-top:4px;font-weight:600;">+37 cargado · −0 drenado</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #f2f2f0;">
+      <div style="padding:14px 18px 14px;border-right:1px solid #f2f2f0;"><div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Training Load</div><div style="font-size:18px;font-weight:700;color:#111;">Low</div><div style="font-size:12px;color:#888;margin-top:3px;">13/176 · Ratio 0.0</div><div style="font-size:11px;color:#b8860b;margin-top:2px;">High Aerobic Shortage</div></div>
+      <div style="padding:14px 18px 14px;"><div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Sleep Score</div><div style="font-size:22px;font-weight:800;color:#10A46A;">79</div><div style="font-size:12px;color:#888;margin-top:3px;">8h 18m · 21:51–06:22</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;">
+      <div style="padding:14px 18px 14px;border-right:1px solid #f2f2f0;"><div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Fitness Age</div><div style="font-size:32px;font-weight:800;color:#10A46A;line-height:1;">39</div><div style="font-size:12px;color:#888;margin-top:4px;">Edad real 40 · target 34.5</div></div>
+      <div style="padding:14px 18px 14px;"><div style="font-size:10px;color:#767676;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">FC Reposo</div><div style="font-size:22px;font-weight:800;color:#10A46A;">59 bpm</div></div>
+    </div>
+  </div>
+  <div class="card-title" style="margin-top:4px;">📐 Medidas · 2 mar 2026</div>
+  <div class="card" style="margin-top:12px;">
+    <div class="row row-link" onclick="openSheet('peso')"><span>Peso</span><span class="row-dim">79.40 kg · 11 mar<span class="row-arrow">›</span></span></div>
+    <div class="row row-link" onclick="openSheet('cintura')"><span>Cintura</span><span><span class="tag amber">89 cm ⚠️</span><span class="row-arrow">›</span></span></div>
+    <div class="row row-link" onclick="openSheet('abdomen')"><span>Abdomen</span><span><span class="tag amber">96 cm ⚠️</span><span class="row-arrow">›</span></span></div>
+    <div class="row row-link" onclick="openSheet('cadera')"><span>Cadera</span><span class="row-dim">94 cm<span class="row-arrow">›</span></span></div>
+    <div class="row row-link" onclick="openSheet('pecho')"><span>Pecho</span><span class="row-dim">99 cm<span class="row-arrow">›</span></span></div>
+    <div class="row row-link" onclick="openSheet('hombros')"><span>Hombros</span><span class="row-dim">117 cm<span class="row-arrow">›</span></span></div>
+    <div class="row row-link" onclick="openSheet('brazo')"><span>Brazo</span><span class="row-dim">35.5 cm<span class="row-arrow">›</span></span></div>
+    <div class="row row-link" onclick="openSheet('muslo')"><span>Muslo</span><span class="row-dim">67.5 cm<span class="row-arrow">›</span></span></div>
+    <div class="row row-link" onclick="openSheet('gemelo')"><span>Gemelo</span><span class="row-dim">39 cm<span class="row-arrow">›</span></span></div>
+  </div>
+  <div class="card-title" style="margin-top:4px;">📊 Indicadores clave</div>
+  <div class="card">
+    <div class="row row-link" onclick="openSheet('ratio')"><span>Ratio cintura/cadera</span><span><span class="tag amber">0.95</span><span class="row-arrow">›</span></span></div>
+    <div class="row row-link" onclick="openSheet('grasa')"><span>Grasa corporal estimada</span><span class="row-dim">~22-24%<span class="row-arrow">›</span></span></div>
+    <div class="row row-link" onclick="openSheet('peso')"><span>Peso objetivo maratón</span><span class="row-dim">70 kg · −9.65 kg<span class="row-arrow">›</span></span></div>
+  </div>
+  <div class="note green" style="margin-top:8px;">📅 Próxima medición: <strong>1 de abril 2026</strong>. Espera cintura −2/−3 cm con el plan actual.</div>
+  <div style="height:8px"></div>
+</div>
+<!-- BOTTOM SHEET -->
+<div class="bs-overlay" id="bs-overlay" onclick="closeSheet(event)">
+  <div class="bs-sheet" id="bs-sheet">
+    <div class="bs-handle"></div>
+    <div class="bs-head"><div class="bs-title" id="bs-title">—</div><div class="bs-current" id="bs-current">—</div></div>
+    <div class="bs-body" id="bs-body"></div>
+  </div>
+</div>
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showScreen('s-hoy',this)"><div class="nav-indicator"><div class="nav-icon">☀️</div></div><div class="nav-label">Hoy</div></button>
+  <button class="nav-btn" onclick="showScreen('s-nutri',this)"><div class="nav-indicator"><div class="nav-icon">🍽️</div></div><div class="nav-label">Nutrición</div></button>
+  <button class="nav-btn" onclick="showScreen('s-plan',this)"><div class="nav-indicator"><div class="nav-icon">🏃</div></div><div class="nav-label">Plan</div></button>
+  <button class="nav-btn" onclick="showScreen('s-med',this)"><div class="nav-indicator"><div class="nav-icon">📏</div></div><div class="nav-label">Medidas</div></button>
+</nav>
+<!-- MODAL DESPENSA -->
+<div class="modal-overlay" id="modal-desp" onclick="if(event.target===this)closeDespModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><div class="modal-title">🥫 Despensa</div><button class="modal-close" onclick="closeDespModal()">×</button></div>
+    <div class="modal-tabs" id="desp-main-tabs"><div class="modal-tab active" onclick="switchDespTab('desp-casa',this)">🏠 Casa</div><div class="modal-tab" onclick="switchDespTab('desp-oficina',this)">🏢 Oficina</div></div>
+    <div class="modal-body">
+      <div id="desp-casa">
+        <div class="modal-tabs" id="desp-sub-tabs"><div class="modal-tab active" onclick="switchDespSubTab('desp-stock',this)">En stock <span id="bc-stock2" style="background:#d0f0e4;color:#10A46A;border-radius:100px;padding:1px 7px;font-size:11px;margin-left:4px;">0</span></div><div class="modal-tab" onclick="switchDespSubTab('desp-compra',this)">Por comprar <span id="bc-compra2" style="background:#fde8e8;color:#9b2a2a;border-radius:100px;padding:1px 7px;font-size:11px;margin-left:4px;">0</span></div></div>
+        <div id="desp-stock"><div id="stock-content2"></div></div>
+        <div id="desp-compra" style="display:none;"><div style="padding:12px 16px 0;"><button onclick="markAllBought();renderDespModal();" style="width:100%;padding:11px;background:#10A46A;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">✓ Todo comprado</button></div><div id="compra-content2"></div></div>
+      </div>
+      <div id="desp-oficina" style="display:none;">
+        <div class="modal-section">🌅 Siempre disponible</div>
+        <div class="modal-row"><div class="modal-row-label">Copos de avena</div></div>
+        <div class="modal-row"><div class="modal-row-label">Leche de soja</div></div>
+        <div class="modal-row"><div class="modal-row-label">Plátano · Mandarinas · Peras</div></div>
+        <div class="modal-row"><div class="modal-row-label">Yogur La Fageda</div></div>
+        <div class="modal-row"><div class="modal-row-label">Anacardos salados · Nueces</div></div>
+        <div class="modal-row"><div class="modal-row-label">Café</div></div>
+        <div class="modal-section">🍽️ Comida (alternar)</div>
+        <div class="modal-row"><div><div class="modal-row-label">Honest Greens</div><div class="modal-row-sub">Bowl cereal + proteína magra · sin salsas cremosas</div></div></div>
+        <div class="modal-row"><div><div class="modal-row-label">ApetEat</div><div class="modal-row-sub">Pedir antes 11h · legumbre + proteína magra</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var PESO_REGISTROS = [
+  {fecha:'2026-02-19',peso:78.70},{fecha:'2026-02-22',peso:78.90},
+  {fecha:'2026-02-26',peso:79.40},{fecha:'2026-02-27',peso:79.55},
+  {fecha:'2026-02-28',peso:79.20},{fecha:'2026-03-01',peso:80.20},
+  {fecha:'2026-03-03',peso:79.50},{fecha:'2026-03-04',peso:79.90},
+  {fecha:'2026-03-05',peso:80.10},{fecha:'2026-03-06',peso:80.25},
+  {fecha:'2026-03-07',peso:80.60},{fecha:'2026-03-08',peso:80.10},
+  {fecha:'2026-03-09',peso:80.10},{fecha:'2026-03-10',peso:80.20},
+  {fecha:'2026-03-11',peso:79.40},
+  {fecha:'2026-03-13',peso:79.65}
+];
+function showScreen(id,btn){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+  setTimeout(drawAllCharts,50);
+}
+function showPlanTab(id,el){
+  document.querySelectorAll('.plan-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.plan-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function toggleProb(id){
+  var p=document.getElementById(id);
+  var a=document.getElementById('pa-'+id);
+  var o=p.classList.toggle('open');
+  a.style.transform=o?'rotate(180deg)':'';
+}
+function toggleMeal(head){head.closest('.meal').classList.toggle('collapsed');}
+var DIA_TIPO   = ['descanso','oficina','fuerza','fuerza','rodaje','tirada','descanso'];
+var DIA_NOMBRE = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+var DIA_EMOJI  = ['😴','🏢','💪','💪','🏃','🏔️','😴'];
+(function(){
+  var today = new Date();
+  var jsDay = today.getDay();
+  var diffToMon = (jsDay===0)?-6:1-jsDay;
+  var monday = new Date(today); monday.setDate(today.getDate()+diffToMon);
+  var MESES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  var weekDates=[];
+  for(var i=0;i<7;i++){var d=new Date(monday);d.setDate(monday.getDate()+i);weekDates.push(d);}
+  var planIdx=[6,0,1,2,3,4,5][jsDay];
+  for(var i=0;i<7;i++){var el=document.getElementById('chip-n'+i);if(el)el.textContent=weekDates[i].getDate();}
+  var chips=document.querySelectorAll('.chip');
+  for(var i=0;i<chips.length;i++){chips[i].classList.remove('past');if(i<planIdx)chips[i].classList.add('past');}
+})();
+var HOY_STATE={};
+function getDateKey(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function getState(){var k=getDateKey();if(!HOY_STATE[k])HOY_STATE[k]={};return HOY_STATE[k];}
+function toggleCheck(id){var s=getState();s[id]=!s[id];var el=document.querySelector('[data-cl="'+id+'"]');if(el)el.classList.toggle('done',!!s[id]);updateProgress();}
+function updateProgress(){
+  var cl=document.getElementById('hoy-checklist');if(!cl)return;
+  var items=cl.querySelectorAll('.cl-item');var total=items.length,done=0;
+  items.forEach(function(it){if(it.classList.contains('done'))done++;});
+  var pct=total?Math.round(done/total*100):0;
+  var fill=document.getElementById('hoy-prog-fill');
+  var count=document.getElementById('hoy-prog-count');
+  var label=document.getElementById('hoy-prog-label');
+  if(fill)fill.style.width=pct+'%';
+  if(count)count.textContent=done+' / '+total;
+  if(label){if(pct===100)label.textContent='✅ Día completado';else if(pct>=75)label.textContent='💪 Casi lo tienes';else if(pct>=50)label.textContent='🔥 Buen ritmo';else if(pct>=25)label.textContent='🚀 Empezando';else label.textContent='Checklist del día';}
+}
+var _clIdx=0;
+function mkItem(id,label,hint,badge){
+  var s=getState();var done=s[id]?' done':'';
+  var bHTML=badge?'<span class="cl-badge">'+badge+'</span>':'';
+  return '<div class="cl-item'+done+'" data-cl="'+id+'" onclick="toggleCheck(\''+id+'\')">' +
+    '<div class="cl-check"><svg class="cl-check-svg" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+    '<div class="cl-body"><div class="cl-label">'+label+'</div>'+(hint?'<div class="cl-hint">'+hint+'</div>':'')+' </div>'+bHTML+'</div>';
+}
+function mkMealItem(id,label,hint,anchorId,planIdx){
+  var s=getState();var done=s[id]?' done':'';
+  var arrowBtn='<button onclick="event.stopPropagation();goToMeal(\''+anchorId+'\','+planIdx+')" style="flex-shrink:0;border:none;background:#f0f5f1;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#10A46A;cursor:pointer;min-width:36px;min-height:36px;">→</button>';
+  return '<div class="cl-item'+done+'" data-cl="'+id+'" onclick="toggleCheck(\''+id+'\')">' +
+    '<div class="cl-check"><svg class="cl-check-svg" viewBox="0 0 12 12" fill="none"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+    '<div class="cl-body"><div class="cl-label">'+label+'</div>'+(hint?'<div class="cl-hint">'+hint+'</div>':'')+' </div>'+arrowBtn+'</div>';
+}
+function mkSection(t){return '<div class="cl-section">'+t+'</div>';}
+function cid(p){return p+'-'+(++_clIdx);}
+function goToMeal(anchorId,planIdx){
+  var nutriBtn=document.querySelector('.nav-btn:nth-child(2)');
+  showScreen('s-nutri',nutriBtn);
+  showDay(planIdx);
+  setTimeout(function(){var el=document.getElementById(anchorId);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},80);
+}
+function renderHoy(planIdx){
+  _clIdx=0;
+  var tipo=DIA_TIPO[planIdx];
+  var today=new Date();var dia=today.getDate();
+  var meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  document.getElementById('hoy-tag').textContent=dia+' '+meses[today.getMonth()];
+  document.getElementById('hoy-title').textContent=DIA_NOMBRE[planIdx];
+  var panel=document.getElementById('d'+planIdx);
+  var badge=panel?panel.querySelector('.train-badge'):null;
+  document.getElementById('hoy-sub').textContent=badge?badge.textContent.trim():'';
+  var html='';
+  html+=mkSection('🌅 Esta mañana');
+  if(tipo==='oficina'){
+    html+=mkItem(cid('m'),'Suplementos en el bolsillo','Malato + D3 + K2 + B12 para el desayuno en oficina');
+  } else {
+    html+=mkItem(cid('m'),'Suplementos del desayuno','Malato + D3 + K2 + B12');
+  }
+  if(tipo==='tirada'){
+    html+=mkItem(cid('m'),'Preparar comida pre-tirada','Tortillas + hummus + aguacate · lista para las 12h');
+    html+=mkItem(cid('m'),'Cargar cinturón de hidratación','500ml agua + sales · listo antes de las 14h');
+  }
+  if(tipo==='rodaje'||tipo==='tirada'){
+    html+=mkItem(cid('m'),'Hidratación desde el inicio','Empieza con 500ml agua antes de café');
+  }
+  if(tipo==='descanso'){
+    html+=mkSection('😴 Descanso');
+    html+=mkItem(cid('s'),'Descanso activo','Movilidad o paseo suave · sin impacto');
+    html+=mkItem(cid('s'),'Foam roller suave','Zonas de tensión acumulada · 5 min');
+  } else if(tipo==='oficina'){
+    html+=mkSection('🏢 Oficina');
+    html+=mkItem(cid('s'),'Pedir ApetEat antes de las 11h','Legumbre + proteína magra · sin fritos · si toca ApetEat');
+    html+=mkItem(cid('s'),'Honest Greens — bowl proteico','Si toca HG · base cereal + proteína · sin salsas cremosas');
+  } else if(tipo==='fuerza'){
+    var sesL=(planIdx===2)?'A':'B';var treeName=sesL==='A'?'Tren inferior':'Tren superior + core';
+    html+=mkSection('💪 Sesión de Fuerza '+sesL+' — '+treeName);
+    html+=mkItem(cid('s'),'Colágeno 15g + zumo naranja','90 min antes del entreno · ~18:30h');
+    html+=mkItem(cid('s'),'Completar Sesión '+sesL+' · 35 min','Calentamiento 5 min + ejercicios + vuelta calma');
+    html+=mkItem(cid('s'),'Foam roller post-sesión','Gemelos + cuádriceps · 5 min');
+  } else if(tipo==='rodaje'){
+    html+=mkSection('🏃 Sesión de Rodaje Z1-Z2');
+    html+=mkItem(cid('s'),'Colágeno 15g + zumo naranja','90 min antes · ~17:30h');
+    html+=mkItem(cid('s'),'Rodaje 6 km Z1-Z2 · FC <150','Primer rodaje post-resfriado · sin forzar');
+    html+=mkItem(cid('s'),'Foam roller post-rodaje','Gemelos + cuádriceps · 5-10 min');
+  } else if(tipo==='tirada'){
+    html+=mkSection('🏔️ Tirada Larga');
+    html+=mkItem(cid('s'),'Colágeno 15g + zumo naranja','90 min antes de salir · ~13:30h');
+    html+=mkItem(cid('s'),'Tirada Z2 10-12 km · FC <155','Sin forzar — recuperación post-resfriado');
+    html+=mkItem(cid('s'),'Sales en bolsillo','Tomar en km 3-4');
+    html+=mkItem(cid('s'),'Foam roller completo post-tirada','Gemelos · cuádriceps · isquios · 10-15 min');
+  }
+  if(panel){
+    var kcalEl=panel.querySelector('.kcal-val');
+    var kcal=kcalEl?kcalEl.textContent.trim():'';
+    html+=mkSection('🍽️ Comidas · '+kcal+' kcal');
+    panel.querySelectorAll('.meal').forEach(function(meal){
+      var time=meal.querySelector('.meal-time')?meal.querySelector('.meal-time').textContent.trim():'';
+      var name=meal.querySelector('.meal-name')?meal.querySelector('.meal-name').textContent.trim():'';
+      var kcalM=meal.querySelector('.meal-kcal')?meal.querySelector('.meal-kcal').textContent.trim():'';
+      var ingList=[];
+      meal.querySelectorAll('.ing').forEach(function(ing,i){if(i<3){var s=ing.querySelector('span');if(s)ingList.push(s.textContent.trim());}});
+      var anchorId=meal.id||'';
+      html+=mkMealItem(cid('c'),time+' · '+name,kcalM+' · '+ingList.join(', '),anchorId,planIdx);
+    });
+    var suppl=panel.querySelector('.suppl');
+    if(suppl){
+      html+=mkSection('💊 Suplementos');
+      suppl.querySelectorAll('.suppl-row').forEach(function(row){
+        var sp=row.querySelectorAll('span');
+        var sname=sp[0]?sp[0].textContent.trim():'';
+        var swhen=sp[1]?sp[1].textContent.trim():'';
+        html+=mkItem(cid('sup'),sname,swhen);
+      });
+    }
+  }
+  html+=mkSection('🌙 Esta noche');
+  if(tipo==='rodaje'||tipo==='tirada'){
+    html+=mkItem(cid('n'),'Bisglicinato de magnesio en cena','Recuperación muscular nocturna');
+  }
+  var nextTipo=DIA_TIPO[(planIdx+1)%7];
+  if(['fuerza','rodaje','tirada'].indexOf(nextTipo)!==-1){
+    html+=mkItem(cid('n'),'Preparar avena overnight para mañana','Avena + leche soja · 5 min · ahorras tiempo');
+    html+=mkItem(cid('n'),'Revisar sesión de mañana','Ver qué toca en el plan · '+DIA_EMOJI[(planIdx+1)%7]+' '+DIA_NOMBRE[(planIdx+1)%7]);
+  }
+  var cl=document.getElementById('hoy-checklist');
+  if(cl)cl.innerHTML=html;
+  var s=getState();Object.keys(s).forEach(function(k){if(s[k]){var el=document.querySelector('[data-cl="'+k+'"]');if(el)el.classList.add('done');}});
+  updateProgress();
+}
+function showDay(i){
+  document.querySelectorAll('.day-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active');});
+  var panel=document.getElementById('d'+i);if(panel)panel.classList.add('active');
+  var chips=document.querySelectorAll('.chip');if(chips[i])chips[i].classList.add('active');
+  renderHoy(i);
+}
+function initDia(){
+  var planIdx=[6,0,1,2,3,4,5][new Date().getDay()];
+  showDay(planIdx);
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initDia);}
+else{initDia();}
+var _pesoView='dia';
+function setPesoView(view,btn){_pesoView=view;document.querySelectorAll('.peso-vtab').forEach(function(b){b.classList.remove('peso-vtab-active');});if(btn)btn.classList.add('peso-vtab-active');drawAllCharts();}
+function aggregateWeekly(registros){
+  var map={};
+  registros.forEach(function(r){var d=new Date(r.fecha);var day=d.getDay()||7;var mon=new Date(d);mon.setDate(d.getDate()-day+1);var key=mon.toISOString().slice(0,10);if(!map[key])map[key]={sum:0,count:0,date:mon};map[key].sum+=r.peso;map[key].count++;});
+  var meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return Object.keys(map).sort().map(function(k){var m=map[k].date;return{label:m.getDate()+' '+meses[m.getMonth()],valor:Math.round(map[k].sum/map[k].count*100)/100};});
+}
+function aggregateMonthly(registros){
+  var map={};var meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  registros.forEach(function(r){var d=new Date(r.fecha);var key=d.getFullYear()+'-'+d.getMonth();if(!map[key])map[key]={sum:0,count:0,m:d.getMonth()};map[key].sum+=r.peso;map[key].count++;});
+  return Object.keys(map).sort().map(function(k){var e=map[k];return{label:meses[e.m],valor:Math.round(e.sum/e.count*100)/100};});
+}
+function buildChartSVG(W){
+  var H=220,PL=44,PR=20,PT=16,PB=38;var cW=W-PL-PR,cH=H-PT-PB;var OBJ=70.0;
+  var mesesProj=['Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  var realPts;
+  if(_pesoView==='dia'){var meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];realPts=PESO_REGISTROS.map(function(r){var p=r.fecha.split('-');return{label:p[2]+'/'+p[1].replace(/^0/,''),valor:r.peso};});}
+  else if(_pesoView==='sem'){realPts=aggregateWeekly(PESO_REGISTROS);}
+  else{realPts=aggregateMonthly(PESO_REGISTROS);}
+  var n=realPts.length;var lastVal=realPts[n-1].valor;
+  var projPts=mesesProj.map(function(m,i){return{label:m,valor:Math.round((lastVal-(lastVal-OBJ)*(i+1)/mesesProj.length)*100)/100};});
+  var allPts=realPts.concat(projPts);var total=allPts.length;
+  var allVals=realPts.map(function(p){return p.valor;}).concat(projPts.map(function(p){return p.valor;}));
+  var yMn=Math.floor(Math.min.apply(null,allVals.concat([OBJ]))-0.5);var yMx=Math.ceil(Math.max.apply(null,allVals)+0.5);
+  function xp(i){return PL+(i/Math.max(total-1,1))*cW;}
+  function yp(v){return PT+cH-((v-yMn)/(yMx-yMn))*cH;}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" xmlns="http://www.w3.org/2000/svg" style="font-family:DM Sans,sans-serif;display:block;">';
+  var gridStep=(yMx-yMn)<=5?1:2;
+  for(var gv=yMn;gv<=yMx;gv+=gridStep){var gy=yp(gv);var isObj=(gv===OBJ);s+='<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="'+(isObj?'#e8a020':'#ece8e2')+'" stroke-width="'+(isObj?'1.5':'1')+'" '+(isObj?'stroke-dasharray="5,3"':'')+'/><text x="'+(PL-6)+'" y="'+(gy+4)+'" text-anchor="end" font-size="11" font-weight="'+(isObj?'600':'400')+'" fill="'+(isObj?'#b87800':'#aaa')+'">'+gv+'</text>';}
+  var sepX=xp(n-1);s+='<line x1="'+sepX+'" y1="'+PT+'" x2="'+sepX+'" y2="'+(PT+cH)+'" stroke="#ddd" stroke-width="1" stroke-dasharray="3,3"/>';
+  var rSeg=realPts.map(function(p,i){return xp(i)+','+yp(p.valor);});
+  s+='<path d="M'+xp(0)+','+(PT+cH)+' L'+rSeg.join(' L')+' L'+xp(n-1)+','+(PT+cH)+' Z" fill="rgba(30,77,43,0.07)"/>';
+  s+='<polyline points="'+rSeg.join(' ')+'" fill="none" stroke="#10A46A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+  var rVals=realPts.map(function(p){return p.valor;});var minIdx=rVals.indexOf(Math.min.apply(null,rVals)),maxIdx=rVals.indexOf(Math.max.apply(null,rVals));
+  realPts.forEach(function(p,i){var isLast=(i===n-1),isKey=(i===0||isLast||i===minIdx||i===maxIdx||n<=8);if(!isKey&&_pesoView!=='mes')return;s+='<circle cx="'+xp(i)+'" cy="'+yp(p.valor)+'" r="'+(isLast?5:3)+'" fill="'+(isLast?'#10A46A':'#fff')+'" stroke="#10A46A" stroke-width="2"/>';if(isLast||n<=4)s+='<text x="'+xp(i)+'" y="'+(yp(p.valor)-9)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#10A46A">'+p.valor+'</text>';});
+  var pSeg=[xp(n-1)+','+yp(lastVal)].concat(projPts.map(function(p,i){return xp(n+i)+','+yp(p.valor);}));
+  s+='<polyline points="'+pSeg.join(' ')+'" fill="none" stroke="#10A46A" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.4"/>';
+  s+='<text x="'+(W-PR-2)+'" y="'+(yp(OBJ)-5)+'" text-anchor="end" font-size="10" font-weight="700" fill="#b87800">OBJ 70</text>';
+  allPts.forEach(function(p,i){var isReal=(i<n);var showReal=i===0||i===n-1||(n<=8)||(i%Math.ceil(n/5)===0);var showProj=(i>=n)&&((i-n)%2===0||i===total-1);if(!showReal&&!showProj)return;var anchor=i===0?'start':(i===total-1?'end':'middle');s+='<text x="'+xp(i)+'" y="'+(H-8)+'" text-anchor="'+anchor+'" font-size="10" fill="'+(isReal?'#888':'#bbb')+'">'+p.label+'</text>';});
+  s+='</svg>';return s;
+}
+function drawChartInto(elId){var el=document.getElementById(elId);if(!el)return;var W=el.clientWidth||el.parentElement.clientWidth||320;el.innerHTML=buildChartSVG(Math.max(W,260));}
+function drawAllCharts(){drawChartInto('wChart2');}
+setTimeout(drawAllCharts,80);
+window.addEventListener('resize',drawAllCharts);
+var MEDIDAS_DATA={
+  peso:{label:'Peso corporal',unidad:'kg',objetivo:70,objetivoLabel:'Objetivo maratón: <strong>70 kg</strong> · faltan −9.4 kg · diciembre 2026',registros:PESO_REGISTROS.map(function(r){var d=new Date(r.fecha);var meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return{fecha:d.getDate()+' '+meses[d.getMonth()],valor:r.peso};}),alza:true},
+  cintura:{label:'Cintura',unidad:'cm',objetivo:82,objetivoLabel:'Objetivo: <strong>~82 cm</strong> · faltan −7 cm · próxima medición 1 abr',registros:[{fecha:'2 mar',valor:89}],alza:true},
+  abdomen:{label:'Abdomen',unidad:'cm',objetivo:null,objetivoLabel:'Objetivo: reducir con déficit calórico · próxima medición 1 abr',registros:[{fecha:'2 mar',valor:96}],alza:true},
+  cadera:{label:'Cadera',unidad:'cm',objetivo:null,objetivoLabel:'Referencia anatómica · próxima medición 1 abr',registros:[{fecha:'2 mar',valor:94}],alza:false},
+  pecho:{label:'Pecho',unidad:'cm',objetivo:null,objetivoLabel:'Referencia muscular',registros:[{fecha:'2 mar',valor:99}],alza:false},
+  hombros:{label:'Hombros',unidad:'cm',objetivo:null,objetivoLabel:'Referencia muscular',registros:[{fecha:'2 mar',valor:117}],alza:false},
+  brazo:{label:'Brazo',unidad:'cm',objetivo:null,objetivoLabel:'Referencia muscular',registros:[{fecha:'2 mar',valor:35.5}],alza:false},
+  muslo:{label:'Muslo',unidad:'cm',objetivo:null,objetivoLabel:'Referencia muscular',registros:[{fecha:'2 mar',valor:67.5}],alza:false},
+  gemelo:{label:'Gemelo',unidad:'cm',objetivo:null,objetivoLabel:'Referencia muscular',registros:[{fecha:'2 mar',valor:39}],alza:false},
+  ratio:{label:'Ratio cintura/cadera',unidad:'',objetivo:0.90,objetivoLabel:'Objetivo: <strong>&lt;0.90</strong> (riesgo cardiovascular bajo) · actual 0.95',registros:[{fecha:'2 mar',valor:0.95}],alza:true},
+  grasa:{label:'Grasa corporal (Navy)',unidad:'%',objetivo:15,objetivoLabel:'Objetivo: <strong>~15%</strong> para maratón · actual ~22-24%',registros:[{fecha:'2 mar',valor:23}],alza:true}
+};
+function buildMiniChart(registros,objetivo,unidad){
+  if(registros.length<2)return'';
+  var vals=registros.map(function(r){return r.valor;});var min=Math.min.apply(null,vals),max=Math.max.apply(null,vals);
+  if(objetivo!=null){min=Math.min(min,objetivo);max=Math.max(max,objetivo);}
+  var pad=(max-min)*0.15||0.5;min-=pad;max+=pad;
+  var W=320,H=100,pl=8,pr=8,pt=10,pb=24;var iw=W-pl-pr,ih=H-pt-pb;
+  function px(i){return pl+i*(iw/(registros.length-1));}
+  function py(v){return pt+ih-(v-min)/(max-min)*ih;}
+  var pts=registros.map(function(r,i){return px(i)+','+py(r.valor);});
+  var path='M'+pts.join('L');
+  var area='M'+px(0)+','+py(registros[0].valor)+'L'+pts.slice(1).join('L')+'L'+px(registros.length-1)+','+(pt+ih)+'L'+px(0)+','+(pt+ih)+'Z';
+  var objLine='';
+  if(objetivo!=null){var oy=py(objetivo);objLine='<line x1="'+pl+'" y1="'+oy+'" x2="'+(W-pr)+'" y2="'+oy+'" stroke="#10A46A" stroke-width="1.5" stroke-dasharray="4,3" opacity=".5"/>';}
+  var labels='';[0,Math.floor(registros.length/2),registros.length-1].forEach(function(i){labels+='<text x="'+px(i)+'" y="'+(H-4)+'" font-size="9" fill="#bbb" text-anchor="middle">'+registros[i].fecha+'</text>';});
+  var lx=px(registros.length-1),ly=py(vals[vals.length-1]);
+  return '<div class="bs-chart"><svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="height:90px;"><defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10A46A" stop-opacity=".15"/><stop offset="100%" stop-color="#10A46A" stop-opacity="0"/></linearGradient></defs><path d="'+area+'" fill="url(#cg)"/><path d="'+path+'" fill="none" stroke="#10A46A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+objLine+'<circle cx="'+lx+'" cy="'+ly+'" r="4" fill="#10A46A"/>'+labels+'</svg></div>';
+}
+function openSheet(key){
+  var d=MEDIDAS_DATA[key];if(!d)return;
+  var regs=d.registros;var last=regs[regs.length-1];
+  document.getElementById('bs-title').textContent=d.label;
+  document.getElementById('bs-current').textContent='Actual: '+last.valor+' '+d.unidad+' · '+last.fecha;
+  var html='';
+  if(regs.length>=2)html+=buildMiniChart(regs,d.objetivo,d.unidad);
+  html+='<div>';
+  for(var i=regs.length-1;i>=0;i--){
+    var r=regs[i];var deltaHTML='';
+    if(i>0){var diff=r.valor-regs[i-1].valor;var cls=diff===0?'delta-eq':(d.alza?(diff>0?'delta-up':'delta-dn'):(diff>0?'delta-dn':'delta-up'));deltaHTML='<span class="bs-hist-delta '+cls+'">'+(diff>0?'+':'')+diff.toFixed(2).replace(/\.?0+$/,'')+' '+d.unidad+'</span>';}
+    html+='<div class="bs-hist-row"><span class="bs-hist-date">'+r.fecha+'</span><span><span class="bs-hist-val">'+r.valor+' '+d.unidad+'</span>'+deltaHTML+'</span></div>';
+  }
+  html+='</div>';
+  if(d.objetivoLabel)html+='<div class="bs-objetivo">🎯 '+d.objetivoLabel+'</div>';
+  document.getElementById('bs-body').innerHTML=html;
+  document.getElementById('bs-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSheet(e){if(e&&e.target!==document.getElementById('bs-overlay'))return;document.getElementById('bs-overlay').classList.remove('open');document.body.style.overflow='';}
+(function(){var sheet=document.getElementById('bs-sheet');var startY=0;sheet.addEventListener('touchstart',function(e){startY=e.touches[0].clientY;},{passive:true});sheet.addEventListener('touchend',function(e){if(e.changedTouches[0].clientY-startY>60)closeSheet({target:document.getElementById('bs-overlay')});},{passive:true});})();
+var CATS=[{id:'proteina',label:'🐟 Proteína'},{id:'verdura',label:'🥦 Verdura'},{id:'fruta',label:'🍌 Fruta'},{id:'lacteos',label:'🥛 Lácteos'},{id:'base',label:'🥣 Base & Despensa'},{id:'secos',label:'🥜 Frutos secos'},{id:'suplem',label:'💊 Suplementos'}];
+var ITEMS=[{id:'salmon',name:'Salmón',note:'Cena post-entreno',cat:'proteina'},{id:'lubina',name:'Lubina',note:'',cat:'proteina'},{id:'dorada',name:'Dorada',note:'',cat:'proteina'},{id:'tofu',name:'Tofu firme x2',note:'Proteína vegetal',cat:'proteina'},{id:'lentejas',name:'Lentejas pardinas',note:'Pre-rodaje',cat:'proteina'},{id:'huevos',name:'Huevos de gallina',note:'Propios — 3 gallinas',cat:'proteina'},{id:'pollo',name:'Pechuga de pollo',note:'Recetario',cat:'proteina'},{id:'sojatext',name:'Soja texturizada',note:'',cat:'proteina'},{id:'tempeh',name:'Tempeh natural',note:'',cat:'proteina'},{id:'merluza',name:'Merluza',note:'Al horno',cat:'proteina'},{id:'calabacin',name:'Calabacín',note:'',cat:'verdura'},{id:'brocoli',name:'Brócoli',note:'',cat:'verdura'},{id:'champi',name:'Champiñón laminado',note:'',cat:'verdura'},{id:'setas',name:'Mix de setas',note:'',cat:'verdura'},{id:'pimientos',name:'Pimientos y cebolla',note:'',cat:'verdura'},{id:'brotes',name:'Ensalada brotes tiernos',note:'',cat:'verdura'},{id:'cherry',name:'Tomates cherry',note:'',cat:'verdura'},{id:'zanahoria',name:'Zanahoria',note:'',cat:'verdura'},{id:'batata',name:'Bastones de batata',note:'Ultracongelada',cat:'verdura'},{id:'patata',name:'Patatas',note:'',cat:'verdura'},{id:'espinacas',name:'Espinacas',note:'',cat:'verdura'},{id:'platanos',name:'Plátanos de Canarias',note:'Desayuno + pre-entreno',cat:'fruta'},{id:'peras',name:'Peras Conferencia',note:'Merienda',cat:'fruta'},{id:'mandarinas',name:'Mandarinas',note:'Snack',cat:'fruta'},{id:'aguacate',name:'Aguacate',note:'',cat:'fruta'},{id:'arandanos',name:'Arándanos',note:'',cat:'fruta'},{id:'freson',name:'Fresones',note:'',cat:'fruta'},{id:'datiles',name:'Dátiles',note:'Barritas caseras',cat:'fruta'},{id:'yogur',name:'Yogur griego ligero',note:'',cat:'lacteos'},{id:'lechesoja',name:'Bebida de soja',note:'Desayuno',cat:'lacteos'},{id:'lecheent',name:'Leche entera fresca',note:'Para el kéfir casero',cat:'lacteos'},{id:'kefir',name:'Kéfir casero',note:'Hecho en casa',cat:'lacteos'},{id:'avena',name:'Copos de avena',note:'Base desayunos',cat:'base'},{id:'pancamp',name:'Pan campeón x2',note:'Pan integral',cat:'base'},{id:'hummus',name:'Hummus x2',note:'',cat:'base'},{id:'tortillas',name:'Tortillas integrales x2',note:'',cat:'base'},{id:'cafe',name:'Café molido x2',note:'',cat:'base'},{id:'quinoa',name:'Quinoa',note:'',cat:'base'},{id:'arrozint',name:'Arroz integral',note:'',cat:'base'},{id:'pastaint',name:'Pasta integral',note:'',cat:'base'},{id:'tahini',name:'Tahini',note:'',cat:'base'},{id:'conctomate',name:'Concentrado de tomate',note:'',cat:'base'},{id:'garammas',name:'Garam masala',note:'',cat:'base'},{id:'jengibre',name:'Jengibre fresco',note:'',cat:'base'},{id:'fidosarroz',name:'Fideos de arroz',note:'',cat:'base'},{id:'miso',name:'Pasta de miso',note:'',cat:'base'},{id:'nueces',name:'Nueces peladas',note:'',cat:'secos'},{id:'anacardos',name:'Anacardos naturales',note:'Oficina',cat:'secos'},{id:'pistachos',name:'Pistachos naturales',note:'',cat:'secos'},{id:'vitd',name:'Vitamina D3 4.000 UI + K2',note:'',cat:'suplem'},{id:'colageno',name:'Colágeno hidrolizado',note:'Polvo · pre-entreno',cat:'suplem'}];
+var NEEDS_BUYING=['pollo','sojatext','tempeh','merluza','patata','espinacas','datiles','freson','arandanos','tortillas','quinoa','arrozint','pastaint','tahini','conctomate','garammas','jengibre','fidosarroz','miso','platanos','peras'];
+var state={};
+function loadDesp(){
+  try{var r=localStorage.getItem('smailing-pantry-v1');state=r?JSON.parse(r):{};}catch(e){state={};}
+  ITEMS.forEach(function(i){if(!state[i.id])state[i.id]={inDesp:NEEDS_BUYING.indexOf(i.id)===-1,bought:false};});
+  renderDespModal();
+}
+function saveDesp(){
+  try{localStorage.setItem('smailing-pantry-v1',JSON.stringify(state));}catch(e){}
+}
+function moveToCompra(id){state[id].inDesp=false;state[id].bought=false;saveDesp();renderDespModal();}
+function toggleBought(id){state[id].bought=!state[id].bought;if(state[id].bought){setTimeout(function(){state[id].inDesp=true;state[id].bought=false;saveDesp();renderDespModal();},700);}saveDesp();renderDespModal();}
+function markAllBought(){ITEMS.forEach(function(i){if(!state[i.id].inDesp){state[i.id].inDesp=true;state[i.id].bought=false;}});saveDesp();renderDespModal();}
+function renderDespModal(){
+  var inD=ITEMS.filter(function(i){return state[i.id]&&state[i.id].inDesp;});
+  var inC=ITEMS.filter(function(i){return state[i.id]&&!state[i.id].inDesp;});
+  var s2=document.getElementById('bc-stock2');var c2=document.getElementById('bc-compra2');
+  if(s2)s2.textContent=inD.length;if(c2)c2.textContent=inC.length;
+  function buildList(items,isCompra){
+    if(!items.length)return'<div style="padding:32px 20px;text-align:center;color:#767676;font-size:14px;">'+(isCompra?'🎉 ¡Todo en despensa!':'📦 Despensa vacía')+'</div>';
+    var out='';
+    CATS.forEach(function(cat){var catItems=items.filter(function(i){return i.cat===cat.id;});if(!catItems.length)return;out+='<div class="modal-section">'+cat.label+'</div>';catItems.forEach(function(item){if(isCompra){var bought=state[item.id]&&state[item.id].bought;out+='<div class="modal-row" style="cursor:pointer;'+(bought?'opacity:.5;':'')+'" onclick="toggleBought(\''+item.id+'\');renderDespModal();"><div style="width:22px;height:22px;border-radius:50%;border:2px solid '+(bought?'#10A46A':'#ddd')+';background:'+(bought?'#10A46A':'transparent')+';display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0;">'+(bought?'<svg viewBox="0 0 12 12" fill="none" width="10" height="10"><polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+' </div><div class="modal-row-label">'+item.name+'</div></div>';}else{out+='<div class="modal-row"><div class="modal-row-label">'+item.name+'</div><button onclick="moveToCompra(\''+item.id+'\');renderDespModal();" style="border:1px solid #f0f0ee;background:#fff;border-radius:8px;padding:5px 12px;font-size:12px;color:#767676;cursor:pointer;flex-shrink:0;">Comprar</button></div>';}});});
+    return out;
+  }
+  var sc=document.getElementById('stock-content2');var cc=document.getElementById('compra-content2');
+  if(sc)sc.innerHTML=buildList(inD,false);if(cc)cc.innerHTML=buildList(inC,true);
+}
+loadDesp();
+function openDespModal(){document.getElementById('modal-desp').classList.add('open');document.body.style.overflow='hidden';renderDespModal();}
+function closeDespModal(){document.getElementById('modal-desp').classList.remove('open');document.body.style.overflow='';}
+function switchDespTab(id,el){
+  document.getElementById('desp-casa').style.display='none';document.getElementById('desp-oficina').style.display='none';
+  document.getElementById(id).style.display='block';
+  document.querySelectorAll('#desp-main-tabs .modal-tab').forEach(function(t){t.classList.remove('active');});
+  if(el)el.classList.add('active');
+}
+function switchDespSubTab(id,el){
+  document.getElementById('desp-stock').style.display='none';document.getElementById('desp-compra').style.display='none';
+  document.getElementById(id).style.display='block';
+  document.querySelectorAll('#desp-sub-tabs .modal-tab').forEach(function(t){t.classList.remove('active');});
+  if(el)el.classList.add('active');
+}
+(function(){
+  var ticking=false;var THRESHOLD=30;
+  function onScroll(){if(ticking)return;ticking=true;requestAnimationFrame(function(){var activeScreen=document.querySelector('.screen.active');if(!activeScreen){ticking=false;return;}var sh=activeScreen.querySelector('.screen-header');if(!sh){ticking=false;return;}var scrollY=window.scrollY||window.pageYOffset;var shrunk=scrollY>THRESHOLD;if(shrunk&&!sh.classList.contains('shrunk'))sh.classList.add('shrunk');else if(!shrunk&&sh.classList.contains('shrunk'))sh.classList.remove('shrunk');ticking=false;});}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  setTimeout(onScroll,100);
+})();
+</script>
+</body>
 </html>
