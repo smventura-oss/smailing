@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase'
 
 // In dev, Vite serves public/ at '/'. In prod, use the GitHub raw URL.
 const DATA_URL = import.meta.env.PROD
-  ? 'https://raw.githubusercontent.com/smventura-oss/smailing/main/public/smailing-data.json'
+  ? 'https://raw.githubusercontent.com/smventura-oss/smailing/claude/setup-html-structure-dnFaA/public/smailing-data.json'
   : '/smailing-data.json'
 
 // ── localStorage helpers ─────────────────────────────────────────────────
