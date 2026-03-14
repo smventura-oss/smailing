@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useShrinkHeader } from '@/composables/useShrinkHeader'
 import { useAppStore } from '@/stores/useAppStore'
@@ -58,6 +58,8 @@ import { useAppStore } from '@/stores/useAppStore'
 const { shrunk } = useShrinkHeader()
 const store      = useAppStore()
 const router     = useRouter()
+
+onMounted(() => store.loadChecklistFromSupabase())
 
 const MESES      = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']
 const DIA_TIPO   = ['descanso','oficina','fuerza','fuerza','rodaje','tirada','descanso']

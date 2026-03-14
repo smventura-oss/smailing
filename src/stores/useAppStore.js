@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { supabase } from '@/lib/supabase'
 
 // ── Static data files ────────────────────────────────────────────────────
 import { WEEK_PLAN, DAY_CHIPS }                 from '@/data/nutrition'
@@ -14,6 +15,10 @@ const DESPENSA_KEY  = 'smailing-pantry-v1'
 function todayKey() {
   const d = new Date()
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+}
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10)
 }
 
 function lsGet(key) {
@@ -31,34 +36,67 @@ export const useAppStore = defineStore('app', () => {
   // DATOS ESTÁTICOS (read-only, importados de /data)
   // ════════════════════════════════════════════════════════════════════════
 
-  // Nutrición — plan semanal
-  const weekPlan    = WEEK_PLAN       // Array[7]  — plan diario de comidas
-  const dayChips    = DAY_CHIPS       // Array[7]  — chips del day-strip
+  const weekPlan    = WEEK_PLAN
+  const dayChips    = DAY_CHIPS
+  const races       = RACES
+  const phases      = PHASES
+  const currentWeek = CURRENT_WEEK
+  const medidasData = MEDIDAS_DATA
+  const garmin      = GARMIN
+  const cats        = CATS
+  const pantryItems = ITEMS
+  const needsBuying = NEEDS_BUYING
 
-  // Plan de entrenamiento
-  const races       = RACES           // Array     — carreras objetivo
-  const phases      = PHASES          // Array     — fases de entrenamiento
-  const currentWeek = CURRENT_WEEK    // Object    — semana en curso
+  // ════════════════════════════════════════════════════════════════════════
+  // PESO REGISTROS (reactivo — seed estático, reemplazado desde Supabase)
+  // ════════════════════════════════════════════════════════════════════════
 
-  // Medidas corporales
-  const medidasData    = MEDIDAS_DATA    // Object — series por métrica
-  const garmin         = GARMIN          // Object — snapshot Garmin
-  const pesoRegistros  = PESO_REGISTROS  // Array  — registros de peso brutos
+  const pesoRegistros = ref([...PESO_REGISTROS])
 
-  // Despensa — catálogo
-  const cats        = CATS            // Array     — categorías
-  const pantryItems = ITEMS           // Array     — ítems del catálogo
-  const needsBuying = NEEDS_BUYING    // Set       — ítems sin stock por defecto
+  // Carga todos los registros del usuario desde Supabase.
+  // Llama desde MedidasView al montar.
+  async function loadPesoRegistros() {
+    const { data, error } = await supabase
+      .from('peso_registros')
+      .select('fecha, peso')
+      .order('fecha', { ascending: true })
+    if (error) { console.warn('[peso] load error', error.message); return }
+    if (data?.length) {
+      pesoRegistros.value = data.map(r => ({ fecha: r.fecha, peso: r.peso }))
+    }
+  }
+
+  // Inserta o actualiza un registro de peso.
+  // Devuelve null en éxito, string de error si falla.
+  async function addPesoRegistro(fecha, peso) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return 'No autenticado'
+
+    const { error } = await supabase
+      .from('peso_registros')
+      .upsert({ user_id: user.id, fecha, peso }, { onConflict: 'user_id,fecha' })
+    if (error) return error.message
+
+    // Update local state
+    const idx = pesoRegistros.value.findIndex(r => r.fecha === fecha)
+    if (idx >= 0) {
+      pesoRegistros.value[idx] = { fecha, peso }
+    } else {
+      pesoRegistros.value = [...pesoRegistros.value, { fecha, peso }]
+        .sort((a, b) => a.fecha.localeCompare(b.fecha))
+    }
+    return null
+  }
 
   // ════════════════════════════════════════════════════════════════════════
   // ESTADO UI
   // ════════════════════════════════════════════════════════════════════════
 
-  const nutriActiveDay = ref(null)    // null = hoy; número (0-6) cuando usuario selecciona
-  const chartView      = ref('todo')  // 'todo' | '30d' | '7d'
+  const nutriActiveDay = ref(null)
+  const chartView      = ref('todo')
 
   // ════════════════════════════════════════════════════════════════════════
-  // CHECKLIST (localStorage, por día)
+  // CHECKLIST (localStorage offline-first + Supabase sync en background)
   // ════════════════════════════════════════════════════════════════════════
 
   const _checkAll = ref(lsGet(CHECKLIST_KEY))
@@ -74,12 +112,45 @@ export const useAppStore = defineStore('app', () => {
   }
 
   function toggleCheck(id) {
-    _checkDay()[id] = !_checkDay()[id]
+    const checked = !_checkDay()[id]
+    _checkDay()[id] = checked
     lsSet(CHECKLIST_KEY, _checkAll.value)
+    // Sync to Supabase in background (fire and forget)
+    _syncCheckItem(id, checked)
   }
 
   function resetChecklist() {
     _checkAll.value[todayKey()] = {}
+    lsSet(CHECKLIST_KEY, _checkAll.value)
+  }
+
+  async function _syncCheckItem(itemId, checked) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    await supabase.from('checklist_state').upsert(
+      { user_id: user.id, fecha: todayISO(), item_id: itemId, checked },
+      { onConflict: 'user_id,fecha,item_id' }
+    )
+  }
+
+  // Carga el estado del checklist de hoy desde Supabase y lo fusiona con localStorage.
+  // Supabase gana en conflictos (más reciente = más fiable).
+  // Llama desde HoyView al montar.
+  async function loadChecklistFromSupabase() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const { data, error } = await supabase
+      .from('checklist_state')
+      .select('item_id, checked')
+      .eq('fecha', todayISO())
+    if (error) { console.warn('[checklist] load error', error.message); return }
+    if (!data?.length) return
+
+    const day = _checkDay()
+    for (const row of data) {
+      day[row.item_id] = row.checked
+    }
     lsSet(CHECKLIST_KEY, _checkAll.value)
   }
 
@@ -159,21 +230,26 @@ export const useAppStore = defineStore('app', () => {
     // Datos estáticos — medidas
     medidasData,
     garmin,
-    pesoRegistros,
 
     // Datos estáticos — despensa
     cats,
     pantryItems,
     needsBuying,
 
+    // Peso (reactivo, Supabase)
+    pesoRegistros,
+    loadPesoRegistros,
+    addPesoRegistro,
+
     // Estado UI
     nutriActiveDay,
     chartView,
 
-    // Checklist
+    // Checklist (offline-first + Supabase sync)
     isChecked,
     toggleCheck,
     resetChecklist,
+    loadChecklistFromSupabase,
 
     // Despensa
     inDesp,

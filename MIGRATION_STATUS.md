@@ -68,13 +68,27 @@
 
 ---
 
-### ⏳ Sesión 4 · Supabase + Auth
-**Estado:** Pendiente
+### ✅ Sesión 4 · Supabase + Auth
+**Estado:** Completada · build ✓ (96 módulos)
 
 **Tareas:**
-- [ ] Mover datos de peso/medidas a tabla Supabase
-- [ ] Sincronizar checklist con Supabase (offline-first)
-- [ ] Gestión de sesión con `useAuthStore`
+- [x] `useAuthStore` — `init()` + `signIn()` + `onAuthStateChange` listener
+- [x] `main.js` — llama `useAuthStore().init()` tras montar pinia
+- [x] `LoginView.vue` — usa `auth.signIn()` en lugar de llamada directa a supabase
+- [x] `useAppStore` — `pesoRegistros` ahora es `ref` reactivo
+  - `loadPesoRegistros()` — fetch de tabla `peso_registros` desde Supabase
+  - `addPesoRegistro(fecha, peso)` — upsert a Supabase + actualiza estado local
+  - `toggleCheck` — sincroniza a `checklist_state` en background (offline-first)
+  - `loadChecklistFromSupabase()` — carga estado de hoy y fusiona con localStorage
+- [x] `WeightChart.vue` — accede al store reactivamente (`store.pesoRegistros`)
+- [x] `MedidasView.vue` — llama `loadPesoRegistros()` en `onMounted`
+- [x] `HoyView.vue` — llama `loadChecklistFromSupabase()` en `onMounted`
+- [x] `supabase/migrations/001_initial_schema.sql` — tablas con RLS:
+  - `peso_registros` (unique por user+fecha)
+  - `medidas` (unique por user+fecha+metrica)
+  - `checklist_state` (PK compuesta user+fecha+item_id)
+
+**Para activar en producción:** ejecutar `001_initial_schema.sql` en el SQL Editor de Supabase.
 
 ---
 

@@ -6,8 +6,8 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useAppStore } from '@/stores/useAppStore'
 
-const props         = defineProps({ view: { type: String, default: 'dia' } })
-const PESO_REGISTROS = useAppStore().pesoRegistros
+const props = defineProps({ view: { type: String, default: 'dia' } })
+const store = useAppStore()
 const el    = ref(null)
 const width = ref(320)
 const OBJ   = 70.0
@@ -51,16 +51,17 @@ const svg = computed(() => {
   const H  = 220, PL = 44, PR = 20, PT = 16, PB = 38
   const cW = W - PL - PR, cH = H - PT - PB
 
+  const registros = store.pesoRegistros
   let realPts
   if (props.view === 'dia') {
-    realPts = PESO_REGISTROS.map(r => {
+    realPts = registros.map(r => {
       const p = r.fecha.split('-')
       return { label: `${p[2]}/${p[1].replace(/^0/, '')}`, valor: r.peso }
     })
   } else if (props.view === 'sem') {
-    realPts = aggregateWeekly(PESO_REGISTROS)
+    realPts = aggregateWeekly(registros)
   } else {
-    realPts = aggregateMonthly(PESO_REGISTROS)
+    realPts = aggregateMonthly(registros)
   }
 
   const n       = realPts.length
