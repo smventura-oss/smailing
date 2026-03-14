@@ -123,11 +123,13 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useShrinkHeader } from '@/composables/useShrinkHeader'
-import { MEDIDAS_DATA, GARMIN } from '@/data/medidas'
+import { useAppStore } from '@/stores/useAppStore'
 import WeightChart from '@/components/medidas/WeightChart.vue'
 import BottomSheet from '@/components/medidas/BottomSheet.vue'
 
 const { shrunk }  = useShrinkHeader()
+const store       = useAppStore()
+const { medidasData: MEDIDAS_DATA, garmin: GARMIN } = store
 const chartView   = ref('dia')
 const sheetOpen   = ref(false)
 const sheetKey    = ref(null)

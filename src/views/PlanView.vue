@@ -71,12 +71,14 @@
 <script setup>
 import { ref } from 'vue'
 import { useShrinkHeader } from '@/composables/useShrinkHeader'
-import { RACES, PHASES, CURRENT_WEEK as W } from '@/data/plan'
+import { useAppStore } from '@/stores/useAppStore'
 import RaceCard   from '@/components/plan/RaceCard.vue'
 import PhaseCard  from '@/components/plan/PhaseCard.vue'
 import FuerzaDetail from '@/components/plan/FuerzaDetail.vue'
 
 const { shrunk }   = useShrinkHeader()
+const store        = useAppStore()
+const { races: RACES, phases: PHASES, currentWeek: W } = store
 const activeTab    = ref('semana')
 
 const TABS = [

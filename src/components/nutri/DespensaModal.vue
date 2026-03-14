@@ -90,13 +90,13 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useDespensaStore } from '@/stores/despensa'
-import { CATS } from '@/data/despensa'
+import { useAppStore } from '@/stores/useAppStore'
 
 defineProps({ open: Boolean })
 defineEmits(['close'])
 
-const desp   = useDespensaStore()
+const desp    = useAppStore()
+const CATS    = desp.cats
 const mainTab = ref('casa')
 const subTab  = ref('stock')
 

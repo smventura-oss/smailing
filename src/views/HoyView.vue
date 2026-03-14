@@ -28,8 +28,8 @@
           v-for="item in section.items"
           :key="item.id"
           class="cl-item"
-          :class="{ done: checklist.isChecked(item.id) }"
-          @click="checklist.toggle(item.id)"
+          :class="{ done: store.isChecked(item.id) }"
+          @click="store.toggleCheck(item.id)"
         >
           <div class="cl-check">
             <svg class="cl-check-svg" viewBox="0 0 12 12" fill="none">
@@ -53,17 +53,18 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useShrinkHeader } from '@/composables/useShrinkHeader'
-import { useChecklistStore } from '@/stores/checklist'
-import { WEEK_PLAN } from '@/data/nutrition'
+import { useAppStore } from '@/stores/useAppStore'
 
 const { shrunk } = useShrinkHeader()
-const checklist  = useChecklistStore()
+const store      = useAppStore()
 const router     = useRouter()
 
 const MESES      = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']
 const DIA_TIPO   = ['descanso','oficina','fuerza','fuerza','rodaje','tirada','descanso']
 const DIA_NOMBRE = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo']
 const DIA_EMOJI  = ['😴','🏢','💪','💪','🏃','🏔️','😴']
+
+const WEEK_PLAN = store.weekPlan
 
 const today   = new Date()
 const planIdx = [6,0,1,2,3,4,5][today.getDay()]
@@ -163,7 +164,7 @@ function buildSections() {
 const sections  = computed(() => buildSections())
 const allIds    = computed(() => sections.value.flatMap(s => s.items.map(i => i.id)))
 const totalCnt  = computed(() => allIds.value.length)
-const doneCnt   = computed(() => allIds.value.filter(id => checklist.isChecked(id)).length)
+const doneCnt   = computed(() => allIds.value.filter(id => store.isChecked(id)).length)
 const pct       = computed(() => totalCnt.value ? Math.round(doneCnt.value / totalCnt.value * 100) : 0)
 const progLabel = computed(() => {
   if (pct.value === 100) return '✅ Día completado'

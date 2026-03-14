@@ -40,16 +40,16 @@
 
 ---
 
-### ⏳ Sesión 2 · Migrar vistas a useAppStore
-**Estado:** Pendiente
+### ✅ Sesión 2 · Migrar vistas a useAppStore
+**Estado:** Completada · build ✓
 
 **Tareas:**
-- [ ] `HoyView.vue` — reemplazar import de `@/data/nutrition` + `useChecklistStore` por `useAppStore`
-- [ ] `NutriView.vue` — reemplazar import de `@/data/nutrition` por `useAppStore`
-- [ ] `PlanView.vue` — reemplazar import de `@/data/plan` por `useAppStore`
-- [ ] `MedidasView.vue` — reemplazar import de `@/data/medidas` + estado local por `useAppStore`
-- [ ] `DespensaModal.vue` — reemplazar `useDespensaStore` por `useAppStore`
-- [ ] Eliminar stores obsoletas: `stores/checklist.js`, `stores/despensa.js`
+- [x] `HoyView.vue` — reemplazar import de `@/data/nutrition` + `useChecklistStore` por `useAppStore`
+- [x] `NutriView.vue` — reemplazar import de `@/data/nutrition` por `useAppStore`
+- [x] `PlanView.vue` — reemplazar import de `@/data/plan` por `useAppStore`
+- [x] `MedidasView.vue` — reemplazar import de `@/data/medidas` + estado local por `useAppStore`
+- [x] `DespensaModal.vue` — reemplazar `useDespensaStore` + `CATS` por `useAppStore`
+- [x] Eliminar stores obsoletas: `stores/checklist.js`, `stores/despensa.js`
 
 ---
 

@@ -72,11 +72,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useShrinkHeader } from '@/composables/useShrinkHeader'
-import { WEEK_PLAN, DAY_CHIPS } from '@/data/nutrition'
+import { useAppStore } from '@/stores/useAppStore'
 import MealCard from '@/components/nutri/MealCard.vue'
 import DespensaModal from '@/components/nutri/DespensaModal.vue'
 
 const { shrunk }  = useShrinkHeader()
+const store       = useAppStore()
+const { weekPlan: WEEK_PLAN, dayChips: DAY_CHIPS } = store
 const route       = useRoute()
 const despOpen    = ref(false)
 
