@@ -8,7 +8,9 @@ export function useShrinkHeader(threshold = 30) {
     if (ticking) return
     ticking = true
     requestAnimationFrame(() => {
-      shrunk.value = (window.scrollY || window.pageYOffset) > threshold
+      const y = window.scrollY || window.pageYOffset
+      if (!shrunk.value && y > threshold) shrunk.value = true
+      else if (shrunk.value && y < threshold * 0.4) shrunk.value = false
       ticking = false
     })
   }
