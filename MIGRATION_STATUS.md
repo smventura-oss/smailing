@@ -92,6 +92,28 @@
 
 ---
 
+### ✅ Sesión 5 · Datos persistentes en JSON
+**Estado:** Completada · build ✓ (92 módulos)
+
+**Tareas:**
+- [x] Crear `public/smailing-data.json` — todos los datos estáticos de la app:
+  `weekPlan`, `dayChips`, `races`, `phases`, `currentWeek`, `pesoRegistros`,
+  `medidasData` (con registros de peso pre-formateados), `garmin`,
+  `cats`, `items`, `needsBuying`
+- [x] Eliminar imports de `@/data/*` en `useAppStore.js`
+- [x] Convertir todas las constantes estáticas a `ref([])` / `ref({})`
+- [x] Añadir `initAppData()` — fetch del JSON, popula todos los refs, llama `_initDesp()`
+  - En **dev** (`npm run dev`): fetch a `/smailing-data.json` (servido por Vite desde `public/`)
+  - En **prod**: fetch a `https://raw.githubusercontent.com/smventura-oss/smailing/main/public/smailing-data.json`
+- [x] Auto-llamada a `initAppData()` al crear el store (sin `await`, reactividad automática)
+- [x] Exponer `dataLoaded` y `dataError` para uso opcional en componentes
+- [x] Build de producción: ✓ 92 módulos (−4 respecto a sesión 4 — data files fuera del bundle)
+
+**Para actualizar los datos:** editar `public/smailing-data.json` y hacer push a `main`.
+Los componentes se actualizarán en el siguiente reload (sin redeploy de la app).
+
+---
+
 ## Dependencias actuales
 ```json
 "dependencies": {

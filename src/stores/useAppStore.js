@@ -2,11 +2,10 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { supabase } from '@/lib/supabase'
 
-// ── Static data files ────────────────────────────────────────────────────
-import { WEEK_PLAN, DAY_CHIPS }                 from '@/data/nutrition'
-import { RACES, PHASES, CURRENT_WEEK }          from '@/data/plan'
-import { MEDIDAS_DATA, GARMIN, PESO_REGISTROS } from '@/data/medidas'
-import { CATS, ITEMS, NEEDS_BUYING }            from '@/data/despensa'
+// In dev, Vite serves public/ at '/'. In prod, use the GitHub raw URL.
+const DATA_URL = import.meta.env.PROD
+  ? 'https://raw.githubusercontent.com/smventura-oss/smailing/main/public/smailing-data.json'
+  : '/smailing-data.json'
 
 // ── localStorage helpers ─────────────────────────────────────────────────
 const CHECKLIST_KEY = 'smailing-checklist-v1'
@@ -33,28 +32,29 @@ function lsSet(key, val) {
 export const useAppStore = defineStore('app', () => {
 
   // ════════════════════════════════════════════════════════════════════════
-  // DATOS ESTÁTICOS (read-only, importados de /data)
+  // DATOS ESTÁTICOS (poblados desde JSON al inicializar)
   // ════════════════════════════════════════════════════════════════════════
 
-  const weekPlan    = WEEK_PLAN
-  const dayChips    = DAY_CHIPS
-  const races       = RACES
-  const phases      = PHASES
-  const currentWeek = CURRENT_WEEK
-  const medidasData = MEDIDAS_DATA
-  const garmin      = GARMIN
-  const cats        = CATS
-  const pantryItems = ITEMS
-  const needsBuying = NEEDS_BUYING
+  const dataLoaded = ref(false)
+  const dataError  = ref(null)
+
+  const weekPlan    = ref([])
+  const dayChips    = ref([])
+  const races       = ref([])
+  const phases      = ref([])
+  const currentWeek = ref({ alert: '', warning: '', stats: [], rows: [], fuerzaA: { title: '', exercises: [] }, fuerzaB: { title: '', exercises: [] } })
+  const medidasData = ref({})
+  const garmin      = ref({})
+  const cats        = ref([])
+  const pantryItems = ref([])
+  const needsBuying = ref([])
 
   // ════════════════════════════════════════════════════════════════════════
-  // PESO REGISTROS (reactivo — seed estático, reemplazado desde Supabase)
+  // PESO REGISTROS (reactivo — seed desde JSON, reemplazado desde Supabase)
   // ════════════════════════════════════════════════════════════════════════
 
-  const pesoRegistros = ref([...PESO_REGISTROS])
+  const pesoRegistros = ref([])
 
-  // Carga todos los registros del usuario desde Supabase.
-  // Llama desde MedidasView al montar.
   async function loadPesoRegistros() {
     const { data, error } = await supabase
       .from('peso_registros')
@@ -66,8 +66,6 @@ export const useAppStore = defineStore('app', () => {
     }
   }
 
-  // Inserta o actualiza un registro de peso.
-  // Devuelve null en éxito, string de error si falla.
   async function addPesoRegistro(fecha, peso) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return 'No autenticado'
@@ -77,7 +75,6 @@ export const useAppStore = defineStore('app', () => {
       .upsert({ user_id: user.id, fecha, peso }, { onConflict: 'user_id,fecha' })
     if (error) return error.message
 
-    // Update local state
     const idx = pesoRegistros.value.findIndex(r => r.fecha === fecha)
     if (idx >= 0) {
       pesoRegistros.value[idx] = { fecha, peso }
@@ -87,6 +84,39 @@ export const useAppStore = defineStore('app', () => {
     }
     return null
   }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // INIT — fetch del JSON
+  // ════════════════════════════════════════════════════════════════════════
+
+  async function initAppData() {
+    try {
+      const res = await fetch(DATA_URL)
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const d = await res.json()
+
+      weekPlan.value    = d.weekPlan
+      dayChips.value    = d.dayChips
+      races.value       = d.races
+      phases.value      = d.phases
+      currentWeek.value = d.currentWeek
+      medidasData.value = d.medidasData
+      garmin.value      = d.garmin
+      cats.value        = d.cats
+      pantryItems.value = d.items
+      needsBuying.value = d.needsBuying
+      pesoRegistros.value = d.pesoRegistros
+
+      _initDesp()
+      dataLoaded.value = true
+    } catch (err) {
+      console.error('[appData] fetch failed', err)
+      dataError.value = err.message
+    }
+  }
+
+  // Auto-fetch al crear el store
+  initAppData()
 
   // ════════════════════════════════════════════════════════════════════════
   // ESTADO UI
@@ -115,7 +145,6 @@ export const useAppStore = defineStore('app', () => {
     const checked = !_checkDay()[id]
     _checkDay()[id] = checked
     lsSet(CHECKLIST_KEY, _checkAll.value)
-    // Sync to Supabase in background (fire and forget)
     _syncCheckItem(id, checked)
   }
 
@@ -133,9 +162,6 @@ export const useAppStore = defineStore('app', () => {
     )
   }
 
-  // Carga el estado del checklist de hoy desde Supabase y lo fusiona con localStorage.
-  // Supabase gana en conflictos (más reciente = más fiable).
-  // Llama desde HoyView al montar.
   async function loadChecklistFromSupabase() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
@@ -162,17 +188,16 @@ export const useAppStore = defineStore('app', () => {
 
   function _initDesp() {
     const saved = lsGet(DESPENSA_KEY)
+    const nbSet = new Set(needsBuying.value)
     const result = {}
-    for (const item of ITEMS) {
+    for (const item of pantryItems.value) {
       result[item.id] = saved[item.id] ?? {
-        inDesp: !NEEDS_BUYING.has(item.id),
+        inDesp: !nbSet.has(item.id),
         bought: false,
       }
     }
     _despState.value = result
   }
-
-  _initDesp()
 
   function _despPersist() {
     lsSet(DESPENSA_KEY, _despState.value)
@@ -200,14 +225,14 @@ export const useAppStore = defineStore('app', () => {
   }
 
   function markAllBought() {
-    for (const item of ITEMS) {
+    for (const item of pantryItems.value) {
       _despState.value[item.id] = { inDesp: true, bought: false }
     }
     _despPersist()
   }
 
-  const inDesp   = computed(() => ITEMS.filter(i => _despState.value[i.id]?.inDesp))
-  const inCompra = computed(() => ITEMS.filter(i => _despState.value[i.id] && !_despState.value[i.id].inDesp))
+  const inDesp   = computed(() => pantryItems.value.filter(i => _despState.value[i.id]?.inDesp))
+  const inCompra = computed(() => pantryItems.value.filter(i => _despState.value[i.id] && !_despState.value[i.id].inDesp))
 
   function isBought(id) {
     return !!_despState.value[id]?.bought
@@ -218,6 +243,10 @@ export const useAppStore = defineStore('app', () => {
   // ════════════════════════════════════════════════════════════════════════
 
   return {
+    // Estado de carga
+    dataLoaded,
+    dataError,
+
     // Datos estáticos — nutrición
     weekPlan,
     dayChips,
