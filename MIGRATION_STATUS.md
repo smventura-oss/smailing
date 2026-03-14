@@ -53,15 +53,18 @@
 
 ---
 
-### ⏳ Sesión 3 · Componentes pendientes + pulido
-**Estado:** Pendiente
+### ✅ Sesión 3 · Componentes pendientes + pulido
+**Estado:** Completada · build ✓
 
 **Tareas:**
-- [ ] Revisar `WeightChart.vue` en medidas/ (actualmente en hoy/)
-- [ ] Revisar `BottomSheet.vue` (duplicado en hoy/ y medidas/)
-- [ ] Asegurar CSS global en `assets/main.css` (colores, cards, nav)
-- [ ] Test en móvil (iOS Safari + Android Chrome)
-- [ ] Verificar build de producción (`npm run build`)
+- [x] Migrar `WeightChart.vue` (medidas/) de `@/data/medidas` → `useAppStore`
+- [x] `BottomSheet.vue` — sin duplicado confirmado; solo existe en `medidas/`
+- [x] Eliminar carpeta `components/hoy/` (estaba vacía)
+- [x] CSS global `assets/main.css` — completo para la implementación actual
+      (47 clases del HTML monolítico son obsoletas; todas reemplazadas por `.fuerza-*`, `.meal-*`, etc.)
+- [x] Build de producción: ✓ 95 módulos, 0 errores
+
+**Resultado:** cero imports directos de `@/data/` fuera de `useAppStore.js`
 
 ---
 

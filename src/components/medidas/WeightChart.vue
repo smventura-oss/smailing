@@ -4,9 +4,10 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { PESO_REGISTROS } from '@/data/medidas'
+import { useAppStore } from '@/stores/useAppStore'
 
-const props = defineProps({ view: { type: String, default: 'dia' } })
+const props         = defineProps({ view: { type: String, default: 'dia' } })
+const PESO_REGISTROS = useAppStore().pesoRegistros
 const el    = ref(null)
 const width = ref(320)
 const OBJ   = 70.0
