@@ -1,0 +1,36 @@
+name: Sync smailing-data.json → feature branch
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'public/smailing-data.json'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: claude/setup-html-structure-dnFaA
+          fetch-depth: 0
+
+      - name: Copy JSON from default branch
+        run: |
+          git fetch origin ${{ github.ref_name }}
+          git checkout origin/${{ github.ref_name }} -- public/smailing-data.json
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet && echo "No changes" && exit 0
+          git add public/smailing-data.json
+          git commit -m "chore(data): sync smailing-data.json from ${{ github.ref_name }} [skip ci]"
+          git push origin claude/setup-html-structure-dnFaA
